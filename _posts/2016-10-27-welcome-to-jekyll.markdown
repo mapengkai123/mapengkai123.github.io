@@ -98,7 +98,9 @@ DevKit 是一个在 Windows 上帮助简化安装及使用 Ruby C/C++ 扩展如 
      1 jekyll new yourblog
  输入命令后会在生成一个yourblog的文件夹，里面的文件大家可以自己研究，对后期开发有很大的帮助。
  接下来在命令行输入
-    1 jekyll serve
+
+     1 jekyll serve
+
  开启了服务后不可关闭，在浏览器访问localhost:4000便可以访问本地博客
  我们可以把本地的博客推到github 这样属于自己的博客就完成了！
 [jekyll-docs]: http://jekyllrb.com/docs/home
