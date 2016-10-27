@@ -95,7 +95,9 @@ DevKit 是一个在 Windows 上帮助简化安装及使用 Ruby C/C++ 扩展如 
 一般来说有一定可能会遇到服务器没有响应或者 443 等错误，这些都无需担心，多尝试几次就OK。
 
 这些前期准备都完成以后，我们就可以在本地建一个博客了，
-     1 jekyll new yourblog
+
+    1 jekyll new yourblog
+
  输入命令后会在生成一个yourblog的文件夹，里面的文件大家可以自己研究，对后期开发有很大的帮助。
  接下来在命令行输入
 
@@ -103,6 +105,7 @@ DevKit 是一个在 Windows 上帮助简化安装及使用 Ruby C/C++ 扩展如 
 
  开启了服务后不可关闭，在浏览器访问localhost:4000便可以访问本地博客
  我们可以把本地的博客推到github 这样属于自己的博客就完成了！
+
 [jekyll-docs]: http://jekyllrb.com/docs/home
 [jekyll-gh]:   https://github.com/jekyll/jekyll
 [jekyll-talk]: https://talk.jekyllrb.com/
