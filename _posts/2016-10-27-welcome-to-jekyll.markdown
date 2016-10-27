@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "使用git搭建博客!"
+title:  "使用jekyll搭建博客!"
 date:   2016-10-27 11:10:38 +0800
 categories: jekyll update
 ---
