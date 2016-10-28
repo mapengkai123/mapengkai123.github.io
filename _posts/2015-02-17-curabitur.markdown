@@ -1,11 +1,10 @@
 ---
 layout: post
-title:  "Linux搭建keepalived!"
-date:   2016-10-27 16:10:38 +0800
-categories: jekyll update
+title:  "keepalived搭建"
+date:   2016-10-27 11:10:38 +0800
+
 ---
-
-
+<img src="/images/fulls/03.jpg" class="fit image"> 
 什么是Keepalived呢?keepalived观其名可知保持存活在网络里面就是 保持在线 了 也就是所谓的高可用或热备用来防止单点故障(单点故障是指一旦某一点出现故障就会导致整个系统架构的不可用)的发生那说到keepalived时不得不说的一个协议就是VRRP协议可以说这个协议就是keepalived实现的基础那么首先我们来看看VRRP协议
 
 注搞运维的要有足够的耐心哦不理解协议就很难透彻的掌握keepalived的了
@@ -33,6 +32,7 @@ Vrrp中存在着一种选举机制，用以选出提供服务的路由即主控�
     vi /usr/local/etc/keepalived/keepalived.conf  
 
 主服务器配置如下：
+
     global_defs {  
             router_id NodeA  
         }  
@@ -50,6 +50,7 @@ Vrrp中存在着一种选举机制，用以选出提供服务的路由即主控�
             192.168.1.214/24  #VRRP HA虚拟地址  
         }  
     }  
+
 
 备用服务器配置如下：
    
@@ -71,7 +72,9 @@ Vrrp中存在着一种选举机制，用以选出提供服务的路由即主控�
         }  
     }  
 
+
 启动keepalived：
+   
 
     keepalived -D -f /usr/local/etc/keepalived/keepalived.conf  
 
