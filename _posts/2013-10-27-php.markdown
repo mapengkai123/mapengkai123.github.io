@@ -1,0 +1,136 @@
+---
+layout: post
+title:  "PDO和mysqli的区别"
+date:   2013-10-27 16:10:38 +0800
+categories: jekyll update
+---
+
+<img src="/images/fulls/08.jpg" class="fit image">
+
+PDO（PHP Data Object）扩展在PHP5中加入，PHP6中将默认识用PDO连接数据库，所有非PDO扩展将会在PHP6被从扩展中移除。该扩展提供PHP内置类 PDO来对数据库进行访问，不同数据库使用相同的方法名，解决数据库连接不统一的问题。PDO需要PHP5核心OO特性的支持，所以它无法运行于之前的PHP版本。
+那么PDO 如何安装呢？接下来我们来详细说说:
+ 安装PDO
+
+版本要求：
+php5.1以及以后版本的程序包里已经带了；
+php5.0.x则要到pecl.php.net下载，放到你的扩展库，就是PHP所在的文件夹的ext文件夹下；
+手册上说5.0之前的版本不能运行PDO扩展。
+
+配置(Windows)：
+修改你的php.ini配置文件,使它支持pdo.（php.ini这个东西没有弄懂的话，先弄清楚，要修改调用你的phpinfo()函数所显示的那个php.ini）
+把
+
+    extension=php_pdo.dll前面的分号去掉，分毫是php配置文件注释符号,这个扩展是必须的。
+    往下还有
+    ;extension=php_pdo.dll
+    ;extension=php_pdo_firebird.dll
+    ;extension=php_pdo_informix.dll
+    ;extension=php_pdo_mssql.dll
+    ;extension=php_pdo_mysql.dll
+    ;extension=php_pdo_oci.dll
+    ;extension=php_pdo_oci8.dll
+    ;extension=php_pdo_odbc.dll
+    ;extension=php_pdo_pgsql.dll
+    ;extension=php_pdo_sqlite.dll
+
+各个扩展所对应的数据库是：
+
+    Driver name Supported databases
+    PDO_DBLIB FreeTDS / Microsoft SQL Server / Sybase
+    PDO_FIREBIRD Firebird/Interbase 6
+    PDO_INFORMIX IBM Informix Dynamic Server
+    PDO_MYSQL MySQL 3.x/4.x
+    PDO_OCI Oracle Call Interface
+    PDO_ODBC ODBC v3 (IBM DB2, unixODBC and win32 ODBC)
+    PDO_PGSQL PostgreSQL
+    PDO_SQLITE SQLite 3 and SQLite 2
+
+你要使用哪种数据库，只要把相应的扩展前的注释符号”;”去掉就可以了。
+
+接下来我们用pdo连接操作MySQL数据库
+数据库的连接：
+我们通过下面的例子来分析PDO连接数据库，建立一个 PDO_config.php 文件，使用的时候直接 include 一下：
+
+        <?php 
+        //数据库类型 Oracle 用 OCI ,对于开发者来说，使用不同的数据库只要改这个:
+        $host   = 'localhost';
+        //数据库主机名
+        $dbName = 'test';
+        //使用的数据库
+        $user   = 'root';
+        //数据库连接用户名
+        $pass   = ' ';
+        //对应的密码
+        $dsn    = "mysql:host=$host; dbname=$dbName";
+        try{
+        //初始化一个PDO对象，就是创建了数据库连接对象 $dbh:
+            $dbh = new PDO($dsn, $user, $pass);
+        //echo "连接成功<br/>"; /*你还可以进行一次搜索操作
+            foreach($dbh->query('SELECT * from FOO')as$row){
+                print_r($row);
+                //你可以用 echo($GLOBAL); 来看到这些值
+         
+            }
+            $dbh = null;
+        }catch(PDOException$e){
+            die("Error!: ".$e->getMessage()."<br/>"); 
+        }
+        /*
+        默认这个不是长连接，如果需要数据库长连接，需要最后加一个参数：array(PDO::ATTR_PERSISTENT => true) 变成这样：
+        $db=newPDO($dsn,$user,$pass,array(PDO::ATTR_PERSISTENT=>true));
+        */
+        $db = new PDO($dsn, $user, $pass);
+        //创建数据库连接对象 $db
+        ?>
+
+
+<img src="/images/fulls/pdo.jpg" class="fit image">
+
+
+Mysqli连接
+
+Mysqli是php5之后才有的功能，没有开启扩展的朋友可以打开您的php.ini的配置文件。
+查找下面的语句：;extension=php_mysqli.dll将其修改为：extension=php_mysqli.dll即可。
+相对于mysql有很多新的特性和优势：
+
+    （1）支持本地绑定、准备（prepare）等语法
+    （2）执行sql语句的错误代码
+    （3）同时执行多个sql
+    （4）另外提供了面向对象的调用接口的方法。
+
+下面一一用php实例进行mysqli数据库连接！
+使用方法一：使用传统的面向过程的方法
+
+        <?php
+        $connect = mysqli_connect('localhost','root','','volunteer') or die('Unale to connect');
+        $sql = "select * from vol_msg";
+        $result = mysqli_query($connect,$sql);
+        while($row = mysqli_fetch_row($result)){
+            echo $row[0];
+        }
+        ?>
+
+使用方法二：使用面向对象的方法调用接口（推荐使用）
+看php代码如下：
+
+        <?php
+        //创建对象并打开连接，最后一个参数是选择的数据库名称
+        $mysqli = new mysqli('localhost','root','','volunteer');
+        //检查连接是否成功
+        if (mysqli_connect_errno()){
+            //注意mysqli_connect_error()新特性
+            die('Unable to connect!'). mysqli_connect_error();
+        }
+        $sql = "select * from vol_msg";
+        //执行sql语句，完全面向对象的
+        $result = $mysqli->query($sql);
+        while($row = $result->fetch_array()){
+            echo $row[0];
+        }
+        ?>
+
+我们不难发现，PDO和Mysqli在连接数据库上已经有了区别。除此之外，在数据库支持上，PDO支持多种数据库，但MYSQLI只支持MYSQL数据库。
+
+更深入了解，可访问 http://www.jb51.net/article/61316.htm
+
+
