@@ -1,0 +1,10 @@
+---
+layout: post
+title:  "搜索后高亮"
+date:   2013-10-28 11:10:38 +0800
+
+---
+<img src="/images/fulls/02.jpg" class="fit image"> 
+搜索后高亮的实现
+
+实现搜索后高亮显示并不难，我们可以用到函数str_replace()或
