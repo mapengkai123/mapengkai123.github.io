@@ -1,0 +1,105 @@
+---
+layout: post
+title:  "sql命令"
+date:   2013-10-29 20:10:38 +0800
+---
+<img src="/images/fulls/04.jpg" class="fit image"> 
+
+
+常用的sql命令在程序员编程时会为我们带来方便，下面总结一下
+
+一、查询数据记录(Select)
+
+语法：Select 字段串行 From table Where 字段=内容
+例子：想从book表中找出作者为"cancer"的所有记录，SQL语句便如下：
+
+        select * from book where author=’cancer’
+
+"*"是取出book表所有的字段，如查询的字段值为数字，则其后的"内容"便无须加上单引号，
+
+如是日期，则在Access中用(#)包括，而在SQL server中则用(’)包括，如:
+
+        select * from book where id=1
+        select * from book where pub_date=#2002-1-7# (Access)
+        select * from book where pub_date=’2002-1-7’ (SQL Server)
+
+提示：
+
+日期函数to_date不是标准sql文，不是所有的数据库适用，所以大家在使用的时候要参考数据库具体
+
+语法
+
+另外如果是查询传入的变量，则如下：
+
+    strau=request.form("author")
+    strsql="select * from book where author=’"&strau&"’"
+
+如果查询的是数字，则：
+
+    intID=request.form("id")
+    strsql="select * from book where id="&intID
+
+在很多数据库中，如：oracle，上面的语句是可以写成：
+
+    strsql="select * from book where id='"&intID&"'"的。
+但是字符型一定不能按照数字格式写，需要注意。
+
+二、添加记录(Insert)
+
+语法：Insert into table(field1,field2,....) Values (value1,value2,....)
+例子：添加一作者是"cancer"的记录入book表:
+    insert into book (bookno,author,bookname) values (’CF001’,’cancer’,’Cancer无组件上传程序’)
+
+同样，如果用到变量就如下：
+
+    strno=request.form("bookno")
+    strau=request.form("author")
+    strname=request.form("bookname")
+    strsql="insert into book (bookno,author,bookname) values (’"&strno&"’,’"&strau&"’，’"&strname&"’)"
+
+用Recordset对象的Addnew插入数据的方法:
+
+语法：
+
+rs.addnew
+rs("field1").value=value1
+rs("field2").value=value2
+...
+rs.update
+
+三、修改数据记录(Update)
+
+语法：update table set field1=value1,field2=value2,...where fieldx=valuex
+
+例子：update book set author=’babycrazy’ where bookno=’CF001’
+
+如果用到变量就如下：
+
+    strno=request.form("bookno")
+    strau=request.form("author")
+    strsql="update book set author=’"&strau&"’ where bookno=’"&strno"’"
+
+四、删除一条记录(Delete)
+
+语法：Delete table where field=value
+
+例子：删除book表中作者是cancer的记录
+
+delete book where author=’cancer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
