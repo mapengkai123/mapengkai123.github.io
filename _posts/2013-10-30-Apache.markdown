@@ -1,0 +1,60 @@
+---
+layout: post
+title:  "认识Apache和php"
+date:   2013-10-30 11:10:38 +0800
+---
+
+<img src="/images/fulls/11.jpg" class="fit image"> 
+
+
+Apache：是当今最流行的一个服务器，性能好，反应速度快，执行效率高
+PHP：是一门服务器端的嵌套在html里的脚本语言，开源、免费、跨平台、执行效率高、功能强大、是当今进行web开发的首选语言。
+Apache和php的关系：
+
+Apache作为一个服务器，php是一门服务器端的语言，php要想在浏览器里正常运行，必须依靠Apache作为支撑，所以php和Apache的关系是php依赖Apache在浏览器里运行，但是php有自己的				命令行也可以独立运行，Apache离开php也是可以正常运行的，所以php和Apache的关系又是相互独立
+掌握如何配置能让Apache加载php，给php运行提供平台 第一种：如果php是绿色版本安装，就需要修改Apache安装目录下conf文件夹里的httpd.conf,添加如下代码：
+
+    LoadModule php5_module "php安装路径/php5apache2_2.dll"
+    <FilesMatch "\.php$">
+    setHandler "application/x-httpd-php"
+    </FilesMatch>   
+
+第二种：非绿色版本的php，在安装php的过程中选择一下Apache的安装路径，系统会自动向Apache安装目录下conf文件夹里的httpd.conf文件里加入以上代码
+
+掌握如何找到Apache所支持的php.ini文件的所在位置新建脚本a.php，编写程序：
+      <?Php
+           Echo phpinfo();
+      ?>
+
+打开浏览器，在地址栏里输入：localhost/a.php或者127.0.0.1/a.php会输出版本内容！
+
+
+掌握如何找到php的扩展目录，并开启某些PHP扩展
+打开php安装目录下的php.ini文件，找到：
+    ; extension_dir = "./"
+    ; On windows:
+    ; extension_dir = "ext"
+
+把第一个和第三个前面的分号去掉，去掉后重启服务器
+继续在此文件中查找以下扩展项：
+
+    [PHP_CURL]
+    extension=php_curl.dll        //php支持的curl函数扩展
+    [PHP_GD2]
+    extension=php_gd2.dll      //php支持的gd2也就是图片处理扩展
+    [PHP_MYSQL]
+    extension=php_mysql.dll    //php支持的mysql扩展
+想要开启次扩展，就把前面的分号去掉重启服务器即可
+
+掌握修改php的配置文件，开启错误调试模式以及配置默认时区
+在php的安装目下同样打开php.ini文件找到：
+
+    display_errors = Off     改为    display_errors = On   即打开了php的错误提示
+    ;date.timezone =        改为    date.timezone =PRC  设置了php的默认时区
+
+了解端口的概念，知道(Apache、MySQL)服务器的默认端口
+端口指：一个软件的标记，相当于门牌号，端口可以被修改
+
+Apache的端口号默认是：80  如果修改为8080，需要在访问的时候加上端口号，例如：localhost:8080/a.php
+MySQL的端口号默认是：3306
+PHP没有自己的端口号，默认和服务器保持一直，所以也就是80

@@ -4,7 +4,7 @@ title:  "javascript表单验证"
 date:   2013-10-31 20:10:38 +0800
 ---
 
-<img src="/images/fulls/03.jpg" class="fit image"> 
+<img src="/images/fulls/10.jpg" class="fit image"> 
 
 	表单HTML
 	<form action="" method="post">
