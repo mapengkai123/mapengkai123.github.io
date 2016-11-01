@@ -1,0 +1,60 @@
+---
+layout: post
+title:  "图片防盗链"
+date:   2013-11-1 20:10:38 +0800
+---
+<img src="/images/fulls/08.jpg" class="fit image"> 
+
+
+众所周知，一个网站如果的图片流量很占用网络带宽，因此，防止图片的被盗连就显得重中之重。那么如何实现放到了呢？下面简单介绍介绍。
+
+一种是使用apache文件FileMatch限制，在httpd.conf中增加 ( 其实也可以将把下面的语句存成一个.htaccess文件)，并放到你的网站的根目录（就是www/html目录），这样子别人就没有办法盗连你的东西了~~
+    SetEnvIfNoCase Referer "^http://yahoo.com/" local_ref=1
+    Order Allow,Deny
+    Allow from env=local_ref
+    Allow from 127.0.0.1
+
+这种很方便禁止非允许访问URL引用各种资源文件
+请大家注意，把第一句"^http://yahoo.com/"改为你的网站。
+
+第二种是使用rewrite,需要增加apache的mode_rewrite，支持.htaccess文件目录权限限制
+在虚拟主机根目录增加.htaccess文件，描述从定向，把非本地地址refer的图片文件都从定向到警
+告图片或者警告网页上。
+
+首先要确认你的服务器或空间的服务器解译引擎为Apache2，还有支持.htaccess客户设置文件，
+如果你有自己的服务器就请先对./conf/httpd.conf 文件做以下修改
+
+找到：#LoadModule rewrite_module modules/mod_rewrite.so
+把前面的 # 给去除
+找到等一个 AllowOverride None 改为 AllowOverride All
+重启Apache2服务器
+接下就是做一个 .htaccess 文件了，其 .htaccess 文件内容为
+
+    RewriteEngine on
+    RewriteCond %{HTTP_REFERER} !^http://aaoo.net/.*$ [NC]
+    RewriteCond %{HTTP_REFERER} !^http://aaoo.net$ [NC]
+    RewriteCond %{HTTP_REFERER} !^http://www.aaoo.net/.*$ [NC]
+    RewriteCond %{HTTP_REFERER} !^http://www.aaoo.net$ [NC]
+    RewriteRule .*.(jpg|jpeg|gif|png|bmp|rar|zip|exe)$ http://down.yoyo.com.ru/err.html [R,NC]
+
+这个方法有个好处是，不同的虚拟主机用不同的描述定义。
+
+接下就是怎么用 .htaccess 文件来实现防盗链了。
+
+首先要在空间上建两个目录(当然目录名随你)，一个为 web 另一个为 down ，
+web 是用来放下载页面的(或下载程序)，down 当然就是放你提供的东东的啦，把 .htaccess 文件的红色部分改一下，改为http://你的域名/web。蓝色部分
+改为你要保护文件的扩展名。绿色部分改为http://你的域名/web。改后保存.htaccess 文件把它上传到 down 目录。
+
+还有第三种：
+我在解决plog禁止盗链的时候，发现个问题，也算个好方法。
+plog把所有资源都自己管理起来，用resserver.php来动态显示，这样统一的入口方便添加权限操作。
+同时造成上面2种方法无法使用，因为不再是apache直接访问资源文件，而是php通过文件读取。
+因此只能在代码中做手脚：在读取资源文件输出之前，加如下判断代码引用
+
+    $referer = $_SERVER['HTTP_REFERER'];
+    $selfurl = $_SERVER['HTTP_HOST'];
+    if(false == strpos($referer,$selfurl))
+    {
+    echo '非法盗链!';
+    exit(1);
+    }
