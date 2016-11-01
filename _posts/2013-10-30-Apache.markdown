@@ -21,20 +21,20 @@ Apache作为一个服务器，php是一门服务器端的语言，php要想在�
 
 第二种：非绿色版本的php，在安装php的过程中选择一下Apache的安装路径，系统会自动向Apache安装目录下conf文件夹里的httpd.conf文件里加入以上代码
 
-掌握如何找到Apache所支持的php.ini文件的所在位置新建脚本a.php，编写程序：
+掌握如何找到Apache所支持的php.ini文件的所在位置新建脚本a.php，
+编写程序：echo phpinfo();
 
-  <?Php
-     echo  phpinfo();
-  ?>
 
 打开浏览器，在地址栏里输入：localhost/a.php或者127.0.0.1/a.php会输出版本内容！
 
 
 掌握如何找到php的扩展目录，并开启某些PHP扩展
 打开php安装目录下的php.ini文件，找到：
-    ; extension_dir = "./"
-    ; On windows:
-    ; extension_dir = "ext"
+      ; extension_dir = "./"
+
+      ; On windows:
+      
+      ; extension_dir = "ext"
 
 把第一个和第三个前面的分号去掉，去掉后重启服务器
 继续在此文件中查找以下扩展项：
