@@ -4,7 +4,7 @@ title:  "详谈ThinkPHP框架"
 date:   2013-11-3 20:10:38 +0800
 ---
 
-<img src="/images/fulls/1.jpg" class="fit image"> 
+<img src="/images/fulls/07.jpg" class="fit image"> 
 
 
 ThinkPHP可以支持WIN/Unix服务器环境，正式版需要PHP5.0以上版本支持，支持Mysql、PgSQL、Sqlite以及PDO等多种数据库，ThinkPHP框架本身没有什么特别模块要求，具体的应用系统运行环境要求视开发所涉及的模块。
