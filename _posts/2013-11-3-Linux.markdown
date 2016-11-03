@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "了解Linux!"
-date:   2016-10-27 11:10:38 +0800
+date:   2013-11-4 08:10:38 +0800
 ---
 <img src="/images/fulls/08.jpg" class="fit image">
 
@@ -18,22 +18,22 @@ Linux有以下几个特点：
 
 Linux中的目录结构
 
-/bin ：系统命令目录
-/dev ：系统设备目录
-/home ：
-/lib ：系统库文件 .so 动态库  .a静态库
-/media ：系统多媒体目录 （软驱、光驱）
-/mnt ：系统挂载目录 （外置u盘） /mnt/usb
-/proc ：系统内存目录
-/sbin ：超级管理员root命令目录
-/tmp ：系统缓存目录 
-/var ：系统临时目录（经常变动） 数据库文件，网页文件，日志文件
-/boot ：系统启动目录
-/etc ：系统配置文件目录
-/lost+found ：失物认领处
-/opt ：第三方程序目录（qq、wps）
-/root ：超级管理员的家
-/usr ：系统程序目录（apache、php、mysql）
+	/bin ：系统命令目录
+	/dev ：系统设备目录
+	/home ：
+	/lib ：系统库文件 .so 动态库  .a静态库
+	/media ：系统多媒体目录 （软驱、光驱）
+	/mnt ：系统挂载目录 （外置u盘） /mnt/usb
+	/proc ：系统内存目录
+	/sbin ：超级管理员root命令目录
+	/tmp ：系统缓存目录 
+	/var ：系统临时目录（经常变动） 数据库文件，网页文件，日志文件
+	/boot ：系统启动目录
+	/etc ：系统配置文件目录
+	/lost+found ：失物认领处
+	/opt ：第三方程序目录（qq、wps）
+	/root ：超级管理员的家
+	/usr ：系统程序目录（apache、php、mysql）
 
 IP地址配置
 
@@ -119,10 +119,9 @@ Linux命令的基本格式及常用命令
 	第一个字母d全称dir（代表目录）
 	后面的位数代表当前文件权限
 	rwxr-xr-x
-	rwx    r-x     r-x
-	7	   5	  5
+	rwx 7   r-x 5    r-x 5 
 	2、ls指令
-	ls [参数] [路径或文件名] ：查看当前路径文件信息
+	ls 参数 路径或文件名：查看当前路径文件信息
 	    -l ：以列表形式显示文件信息
 	ll -a ：查看文件的全部信息（包括隐藏文件）
 
