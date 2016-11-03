@@ -1,0 +1,190 @@
+---
+layout: post
+title:  "了解Linux!"
+date:   2016-10-27 11:10:38 +0800
+---
+<img src="/images/fulls/02.jpg" class="fit image">
+
+我们先来了解Linux系统的含义：
+从狭义上来讲,Linux是由Linus（林纳斯）开发的一段Linux的内核代码;
+广义上看就是Linux系统的发行版（红帽，CentOS）;
+
+Linux有以下几个特点：
+	1.开放性
+	2.多用户
+	3.多任务
+	4.良好的用户界面
+	5.设备独立性
+
+Linux中的目录结构
+
+/bin ：系统命令目录
+/dev ：系统设备目录
+/home ：
+/lib ：系统库文件 .so 动态库  .a静态库
+/media ：系统多媒体目录 （软驱、光驱）
+/mnt ：系统挂载目录 （外置u盘） /mnt/usb
+/proc ：系统内存目录
+/sbin ：超级管理员root命令目录
+/tmp ：系统缓存目录 
+/var ：系统临时目录（经常变动） 数据库文件，网页文件，日志文件
+/boot ：系统启动目录
+/etc ：系统配置文件目录
+/lost+found ：失物认领处
+/opt ：第三方程序目录（qq、wps）
+/root ：超级管理员的家
+/usr ：系统程序目录（apache、php、mysql）
+
+IP地址配置
+	vi /etc/sysconfig/network-scripts/ifcfg-eth0
+
+配置网卡IP地址
+
+	vi /etc/sysconfig/network-scripts/ifcfg-eth0   (等号两端不能有空格)
+	DEVICE=eth0                                #物理设备名
+	IPADDR=192.168.1.10                   #IP地址
+	NETMASK=255.255.255.0            #掩码
+	GATEWAY=192.168.1.1                 #网关地址
+	ONBOOT=yes                                  # [yes|no]
+	BOOTPROTO=static     #[none|static|bootp|dhcp]（引导时不使用协议|静态分配|BOOTP协议|DHCP协议）
+	2.配置网卡DNS
+	配置文件在/etc/resolv.conf下面。
+	vi /etc/resolv.conf
+	nameserver 202.109.14.5             #主DNS
+	nameserver 219.141.136.10         #次DNS
+	search localdomain
+
+查看网卡状态
+
+	nmcli_dev_status 
+
+Linux命令的基本格式及常用命令
+
+1）基本格式
+	指令 选项 参数
+	指令 选项
+	指令 参数
+	指令
+
+
+2）常用指令
+	ls ：查看当前路径文件信息
+	-l ：查看文件的详细信息
+
+以上指令还可以写成ll的形式，也可以达到以上效果
+
+	-a ：查看文件的全部信息（包括隐藏文件）
+
+以上选项还可以写在一起，如下所示
+注：对于很多同学如果记不住Shell有哪些附件参数或选项，可以通过man（manual的缩写）指令来查询当前指令信息。
+
+看完后，可以通过字母q退出
+	pwd  ：查看当前工作区
+	cd ：切换目录
+	cd 空格 /home/zhangsan
+	cd空格 .. 跳转到上一级目录
+	cd 空格 ~ 返回超级管理的家
+	clear 清屏操作
+	login ：登陆
+	logout ：登出（注销）
+	以上两个命令主要针对字符界面
+	图形界面 ：ctrl+alt+f1
+	字符界面 ：ctrl+alt+f2~f6
+	shutdown ：关机
+	-h ：多少分后关机 shutdown  –h 分钟数（如为0则立即关机）
+	–r ：多少分后重启 shutdown  –r 分钟数（如为0则立即重启）
+	–k ：警告多少分后关机 shutdown –k 分钟数 （并不执行关机指令，只是一种警告信息）
+	-c ：中止关机指令（通常用ctrl+c中止关机指令）
+	halt ：关机（只关闭Linux系统，但不关闭电源）
+	reboot ：重启
+	su  : 切换用户
+
+三、文件管理
+	1、Linux系统中的文件权限
+	r(read)	   4    可读
+	w(write)    2     可写
+	x()    	   1     可执行
+	644 	  755
+	rw-r-r	  rwx-rx-rx
+	在Linux中可以通过ls –l查看文件的详细信息
+	drwxr-xr-x说明
+	第一个字母d全称dir（代表目录）
+	后面的位数代表当前文件权限
+	rwxr-xr-x
+	rwx    r-x     r-x
+	7	   5	  5
+	2、ls指令
+	ls [参数] [路径或文件名] ：查看当前路径文件信息
+	    -l ：以列表形式显示文件信息
+	ll -a ：查看文件的全部信息（包括隐藏文件）
+
+3、文件的创建与删除
+
+	1）vi filename ：创建文件、
+	2）touch 文件名 ：创建文件但不打开
+	3）rm 文件名 ：删除文件或文件夹
+	-r ：递归删除
+	-f ：删除确认
+
+4、目录管理
+
+	1）mkdir 目录名 ：创建文件目录
+	-p ：递归创建
+	-m ：创建目录时，指定文件权限
+	2）rmdir 目录名 ：删除文件目录
+	-p ：递归删除
+
+说明：rmdir指令在删除文件夹时，如要删除的文件存在子文件时，系统是不允许删除的
+
+5、复制与移动
+	1）复制    cp [参数] <源文件路径> <目标文件路径>
+	-R ：递归复制
+	-p ：复制时保持文件的原有属性
+	-v ：显示复制进度
+	 复制文件夹：
+	 复制文件：
+
+	2）移动    mv [参数] [源文件或目录] <目标文件或目录>
+	-v ：显示进度
+
+mv除了可以移动某个文件，还可以实现为文件重命名
+
+
+6、文件统计
+	wc [参数] <文件列表> ：文件大小统计
+	-c	：统计文件字节数
+	-l ：统计文件的总行数
+	-w ：统计文件的单词数
+
+7、grep搜索 (管道命令)
+	grep [参数] <‘字符串’> <源文件>
+	-n ：匹配的行号
+	-c ：匹配的行数
+	-i （ignore）：忽略大小写
+
+8、显示文件内容
+
+	1）cat ：显示文件内容（正序显示）
+	2）tac ：显示文件内容（反序显示）
+
+9、更改文件权限
+	chmod  ：更改文件权限
+	-R ：递归修改
+
+10、find 文件查找
+	find [目录列表] [匹配参数] [匹配标准]  查找文件
+	-name ：根据文件的名称查找
+
+11、gzip压缩工具
+	语法： gzip [-d#] filename 其中#为1-9的数字
+	“-d” : 解压缩时使用
+	“-#” : 压缩等级，1压缩最差，9压缩最好，6为默认
+
+12、bzip2压缩工具
+	语法： bzip2 [-dz] filename
+	bzip2 只有两个选项需要您掌握。
+	“-d” : 解压缩
+	“-z” : 压缩
+	压缩时，可以加 “-z” 也可以不加，都可以压缩文件，”-d” 则为解压的选项：
+
+以上这些都是Linux基本命令 可以多加练习，此外我们可以访问： http://linux.vbird.org/linux_basic ，跟鸟哥学习Linux！
