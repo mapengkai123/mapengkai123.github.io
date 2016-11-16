@@ -1,0 +1,141 @@
+---
+layout: post
+title:  "PHP 数组函数及运算"
+date:   2013-10-22 10:10:38 +0800
+categories: jekyll update
+---
+
+<img src="/images/fulls/timg.jpg" class="fit image">
+
+一、常用的数组函数
+
+count()  :求数组的长度
+
+array_keys：获取一个数组的所有键名，返回一个索引数组
+
+array_values：获取一个数组的所有值，返回一个索引数组
+
+array_shift：从数组的前面弹出元素，得到元素的值
+
+array_unshift：从数组的前面压入元素，得到当前数组元素的个数
+
+array_push：从数组的后面压入元素，得到当前数组元素的个数
+
+array_pop：从数组的后面弹出元素，获得元素的值
+
+in_array（）： 检查数组中是否存在某个值;   有两个参数，第一个参数是要查找的值，第二个参数是数组名，返回值为布尔，找到则true否则false
+
+array_search （）：在数组中搜索给定的值，如果成功则返回相应的键名   有两个参数，第一个参数是要找的值，第二个参数是数组名
+
+array_key_exists（）：检查给定的键名或索引是否存在于数组中  存在返回为 true，否则false，有两个参数，第一个是键名，第二个是数组名
+
+explode（）：将字符串分割成为数组  有两个参数，第一个是分割符号，第二个是字符串名，返回值为一个分割后的新数组
+
+implode（）：将一个数组连接成为一个字符串，有两个参数，第一个是连接标识符号，第二个参数是数组名，返回值为一个新字符串
+
+in_array($value, $arr)，检索$value是否在$arr中，返回布尔值
+。
+array_key_exists($key, $arr)，检索数组$arr中，是否有$key这个键名。
+
+array_search($value, $arr), 检索$value是否在$arr中，若存在返回键	名。
+
+array_reverse($arr, true)，将一个数组逆向排序，如果第二个参数为true，则保持键名。
+
+array_flip($arr)交换数组的键和值
+
+count($arr)统计数组元素的个数
+
+array_count_values($arr)统计数组中所有值的出现次数
+
+array_unique($arr)移除数组中的重复值
+
+sort($arr)，由小到大排序。
+
+rsort($arr)，由大到小排序。
+
+array_merge — 合并一个或多个数组
+
+array_sum($arr)，对数组的所有元素求和。
+
+
+二、字符串数组函数
+
+字符串与数组之间的关系（转换
+
+explode：爆炸，将一个字符串按照某个指定的规则（通常是特殊字符），将数组分成多个段，每一段都当做一个数组的元素，返回一个索引数组
+
+implode：粘合，将一个数组内部的所有元素按照某个指定的规则（特殊字符），将所有的元素拼接成一个字符串
+
+三、数组运算
+数组运算通常指的两种：+运算，合并运算，比较运算
+
++运算
+将两个数组的元素进行数量上的增加，返回一个数组；如果数组元素的键名在第一个数组中存在，那么第二个数组的元素就会被抛弃（键名无论是索引还是关联都是一样的）
+
+合并运算
+array_merge：合并，指的是将两个数组中的元素进行累计。如果后面的数组与前面的数组有下标（键名：关联）相同的，那么后面的元素的值会覆盖前面的；如果是索引的相同下标，会自动的修改下标叠加到前面的数组里
+
+
+
+四、数组之间的转换
+一维数组转换为二维数组
+
+	$arr = array();
+	for($i=1;$i<=100;$i++)
+	{
+		$arr[] = $i;
+	}
+	$multi = array() ; // 声明一个多维的结果数组
+	if(is_array($arr) && count($arr) > 0){
+		foreach ($arr as $key=>$val)
+		{
+			...
+		}
+	}
+
+二维数组转换为一维数组
+
+	$msg = array(
+	　　array(
+	　　　　'id'=>'45',
+	　　　　'name'=>'jack'
+	　　),
+	　　array(
+	　　　　'id'=>'34',
+	　　　　'name'=>'mary'
+	　　),
+	　　array(
+	　　　　'id'=>'78',
+	　　　　'name'=>'lili'
+	　　),
+	);
+
+第一种方法：
+
+	foreach($msg as $k => $v){
+	　　　　$ids[] = $id;
+	　　　　$names[] = $name;
+	　　}
+
+第二种方法：
+
+	$ids = array_column($msg, 'id');
+	$names = array_column($msg, 'name');
+
+以上两种解法print_r($names);后的结果为：
+
+	Array(
+	　　[0]=>jack
+	　　[1]=>mary
+	　　[2]=>lili
+	)
+
+注意：array_column();可以有第三个参数，如 $n = array_column($msg, 'name', 'id');
+
+print_r($n);的结果为：
+
+	Array(
+	　　[45]=>jack
+	　　[34]=>mary
+	　　[78]=>lili
+	)

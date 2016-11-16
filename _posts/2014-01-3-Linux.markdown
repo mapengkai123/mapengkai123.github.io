@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "了解Linux!"
-date:   2013-11-4 08:10:38 +0800
+date:   2014-01-03 08:10:38 +0800
 ---
 <img src="/images/fulls/08.jpg" class="fit image">
 

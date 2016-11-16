@@ -4,7 +4,7 @@ title:  "session 和cookie"
 date:   2013-10-28 11:10:38 +0800
 
 ---
-<img src="/images/fulls/01.jpg" class="fit image"> 
+<img src="/images/fulls/session.jpg" class="fit image"> 
 
 
 当你在浏览网站的时候，WEB 服务器会先送一小小资料放在你的计算机上，Cookie 会帮你在网站上所打的文字或是一些选择，
