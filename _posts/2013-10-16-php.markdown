@@ -5,7 +5,7 @@ date:   2013-10-16 14:10:38 +0800
 categories: jekyll update
 ---
 
-<img src="/images/fulls/timg.jpg" class="fit image">
+<img src="/images/fulls/php.jpg" class="fit image">
 
 一、PHP的三大结构
 

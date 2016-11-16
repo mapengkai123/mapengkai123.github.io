@@ -7,6 +7,7 @@ date: 2015-12-06T14:37:44.000Z
 
 <img src="/images/fulls/01.jpg" class="fit image"> 
 
+
 （1）HTTP重定向负载均衡。
 
          这种负载均衡方案的优点是比较简单；

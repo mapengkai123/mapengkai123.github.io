@@ -4,6 +4,8 @@ title:  "使用jekyll搭建博客!"
 date:   2016-10-27 11:10:38 +0800
 ---
 <img src="/images/fulls/jekyll.png" class="fit image">
+
+
 打造高端blog
 前期准备：windows安装ruby和jekyll
 先对环境的安装
