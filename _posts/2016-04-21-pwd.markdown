@@ -1,0 +1,42 @@
+---
+layout: post
+title:  "php借助mcript扩展实现对称加密 "
+date:   2016-04-21 11:05:38 +0800
+---
+<img src="/images/fulls/01.jpg" class="fit image">
+
+1.对称加密主要利用相同的密钥来实现，而非对称加密利用公钥和私钥来加密，比较而言对称加密速度快，但是安全性要低
+
+非对称加密方式：http://blog.csdn.NET/zph1234/article/details/52440613
+
+为什么使用base64_encode(),主要是用于传参，直接加密完成后不是我们能理解的字符串，也就是大家所说的乱码
+
+2.进行加密（使用mcript扩展，DES类型），关键点在于$key="key:1111",相同的密钥串
+
+
+    <?php  
+    header("content-type:text/html;charset=utf-8");  
+    $str = "我是加密前的内容"; //加密内容  
+    $key = "key:1111"; //密钥  
+    $cipher = MCRYPT_DES; //密码类型  
+    $modes = MCRYPT_MODE_ECB; //密码模式  
+    $iv = mcrypt_create_iv(mcrypt_get_iv_size($cipher,$modes),MCRYPT_RAND);//初始化向量  
+    echo "加密明文：".$str."<p>";  
+    $str_encrypt = mcrypt_encrypt($cipher,$key,$str,$modes,$iv); //加密函数  
+    echo "加密密文：".$str_encrypt." <p>";  
+    echo $str_encrypt=base64_encode($str_encrypt);  
+
+3.进行解密，$key="key:1111",相同的密钥串
+
+
+    <?php  
+    header("content-type:text/html;charset=utf-8");  
+    $key = "key:1111"; //密钥  
+    $cipher = MCRYPT_DES; //密码类型  
+    $modes = MCRYPT_MODE_ECB; //密码模式  
+    $iv = mcrypt_create_iv(mcrypt_get_iv_size($cipher,$modes),MCRYPT_RAND);//初始化向量  
+    $str_encrypt="trn1duq6vt4i8v66Ea9jo7qZ2X7JWmkf";//这里的值是第2步中的$str_encrypt=base64_encode($str_encrypt);  
+    $str_encrypt=base64_decode($str_encrypt);  
+    echo "加密密文：".$str_encrypt." <p>";  
+    $str_decrypt = mcrypt_decrypt($cipher,$key,$str_encrypt,$modes,$iv); //解密函数  
+    echo "还原：".$str_decrypt;  

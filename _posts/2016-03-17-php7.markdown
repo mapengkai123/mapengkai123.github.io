@@ -1,0 +1,32 @@
+---
+layout: post
+title:  " php7 "
+date:   2016-03-17 09:55:38 +0800
+---
+<img src="/images/fulls/centos.jpg" class="fit image">
+
+1.如果之前已经安装我们先卸载一下
+
+    yum remove php php-common  
+
+2.由于Linux的yum源中的PHP不是最新版本，所以我们使用https://webtatic.com/的yum源来安装，可以直接参考https://webtatic.com/packages/php70/
+
+    rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm  
+    rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm  
+
+
+3.好了现在我们来安装php,或者php-fpm
+
+    yum install php70w php70w-opcache  
+    yum install php70w-fpm php70w-opcache  
+
+重启apache，或者php-fpm，打开phpinfo(),就可以看到7.0版本了
+4.由于pecl中的扩展并不是所有的都支持php7，基本pecl支持的话，https://webtatic.com/就支持
+
+比如安装pdo我们执行以下命令
+
+    yum install php70w-pdo  
+
+5.好好看看https://webtatic.com/packages/php70/
+
+6.如果安装最新版本，最好办法是源码安装，建议大家不要抵触，其实很简单的，要去摸索

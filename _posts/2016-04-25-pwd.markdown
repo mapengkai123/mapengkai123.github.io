@@ -1,0 +1,40 @@
+---
+layout: post
+title:  "单项散列加密  "
+date:   2016-04-25 11:05:38 +0800
+---
+<img src="/images/fulls/04.jpg" class="fit image">
+
+
+1.加密文件
+
+    <?php  
+    //sha1_en.php  
+    header("content-type:text/html;charset=utf-8");  
+    $str = "我是张三，能给我个人数据吗";  
+    $salt="123456";//我是唯一不变的salt  
+    $sha1=sha1($str.$salt);//或者$sha1=md5($str.$salt);  
+    echo $str;  
+    echo "<br/>";  
+    echo $sha1;  
+    echo "<br/>";  
+    echo "http://localhost//sha1_de.php?str=$str&sha1=$sha1";  
+    ?>  
+
+2.解密文件
+
+    <?php  
+    //sha1_de.php  
+    header("content-type:text/html;charset=utf-8");  
+    $str=$_GET["str"];  
+    $sha1=$_GET["sha1"];  
+    $salt="123456";//我是唯一不变的salt  
+    $verify=sha1($str.$salt);//或者$verify=md5($str.$salt);  
+    echo $verify;  
+    if($verify==$sha1){  
+        echo "你是张三，给你信息";  
+    }else{  
+        echo "你是假冒伪劣产品";  
+        echo "你的ip".$_SERVER['REMOTE_ADDR']."已经被记录了";  
+    }  
+    ?>  
