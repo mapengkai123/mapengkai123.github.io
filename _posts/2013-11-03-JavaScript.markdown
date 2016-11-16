@@ -5,7 +5,7 @@ date:   2013-11-01 18:10:38 +0800
 categories: jekyll update
 ---
 
-<img src="/images/fulls/02.jpg" class="fit image">
+<img src="/images/fulls/09.jpg" class="fit image">
 
 一、Javascript 中 BOM编程的简介
 
