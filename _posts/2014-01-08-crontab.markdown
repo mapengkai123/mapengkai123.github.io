@@ -1,0 +1,161 @@
+---
+layout: post
+title:  "定时任务及计划任务"
+date:   2014-01-08 18:25:38 +0800
+---
+<img src="/images/fulls/07.jpg" class="fit image">
+
+
+一、定时任务
+  定时任务，指定一个时间执行一个任务，只能执行一次。
+1、指令：at
+2、语法： at  时间
+         at> 执行的指令
+ 时间类型 ：
+1）HH:MM
+说明：在今日的 HH:MM 时刻进行，若该时刻已超过，则明天的 HH:MM 进行此任务。
+  2）HH:MM YYYY-MM-DD
+说明：规定在某年某月的某一天的特殊时刻进行该项任务
+  3）HH:MM[am|pm] [Month] [Date]
+说明：规定在某年某月某日的某时刻进行该项任务
+ 4）能够直接使用today（今天）、tomorrow（明天）来指定完成命令的时间。
+ 5）now + 5 minutes
+3、退出at命令 ctrl+d
+命令前提：
+需要开启atd进程
+如果未安装atd需进行安装:
+安装命令: yum -y install at
+ps -ef | grep atd 查看是否开启atd
+开启atd  service atd start|stop|restart|status
+chkconfig  atd  on   设置atd开机启动
+4、查询未执行的定时任务
+   命令：atq
+5、删除未执行的定时任务
+  命令：atrm 任务ID号
+
+二、计划任务
+1、命令crontab
+  crontab 参数
+  参数  -u 指定用户（如无指定即为当前用户）
+        -l 列出计划任务
+        -e 制定计划任务
+        -r 删除计划任务
+ crontab -e
+ 分，时，日，月，周  要执行的命令
+CRONTAB语法及应用
+
+ 
+
+1：查看当前用户的定时任务
+
+[oracle@localhost ~]$ crontab -l
+
+* * * * * /home/oracle/test.sh >/dev/null 2>&1
+
+2：编辑当前用户的定时任务
+
+ 
+
+可以在编辑状态修改、删除、新增一些定时任务。注释一般用#
+
+[oracle@localhost ~]$ crontab -e
+
+3：删除当前用户的定时任务
+
+[root@localhost ~]# crontab -r
+
+[root@localhost ~]# crontab -l
+
+no crontab for root
+
+4：如下所示，一般crontab文件里面的定时任务格式如下所示：
+
+59 23 * * * /home/oracle/scripts/alert_log_archive.sh >/dev/null 2>&1
+
+crontab 文件中每个条目中各个域的意义和格式：
+
+第一列 分钟： 1——59
+
+第二列 小时： 1——23(0表示子夜)
+
+第三列 日 ： 1——31
+
+第四列 月 ： 1——12
+
+第五列 星期： 星期0——6(0表示星期天，1表示星期一、以此类推)
+
+第六列 要运行的命令
+
+我们暂且用C1、C2、C3、C4、C5、C6代表这六列，前面五列通过组合方式来决定执行脚本的频率，最小频率为每分钟执行一次，其中Cn可以用 * ; */n ; T1-T2; a,b,c; 四种形式来表示：
+
+当 C1 为 * 时表示每分钟都要执行脚本，C2 为 * 时表示每小时都要执行程式，依次类推.....
+
+当 C1 为 T1-T2 时表示从第 T1 分钟到第 T2 分钟这段时间内要执行，C2 为 T1-T2 时表示从第 T1 到第 T2 小时都要执行，依次类推....
+
+当 C1 为 */n 时表示每 n 分钟的时间间隔执行一次，C2 为 */n 表示每隔n小时的间隔执行一次，依次类推.....
+
+当 C1 为 a, b, c,... 时表示第 a, b, c,... 分钟要执行，C2 为 a, b, c,... 时表示第 a, b, c...个小时要执行，依次类推....
+
+下面列举几个例子供大家参考
+
+1： 59 23 * * * /home/oracle/scripts/alert_log_archive.sh >/dev/null 2>&1
+
+表示每天23点59分执行脚本/home/oracle/scripts/alert_log_archive.sh
+
+2: */5 * * * * /home/oracle/scripts/monitoring_alert_log.sh >/dev/null 2>&1
+
+表示每5分钟执行一次脚本/home/oracle/scripts/monitoring_alert_log.sh
+
+3： 0 20 * * 1-5 mail -s "**********" kerry@domain.name < /tmp/maildata
+
+周一到周五每天下午 20:00 寄一封信给 kerry@domain.name
+
+..............................................
+
+关于 >/dev/null 2>&1 的解释：
+
+0表示键盘输入
+
+1表示标准输出
+
+2表示错误输出.
+
+我们首先创建test.sh脚本如下：
+
+#! /bin/sh
+
+echo "hello, everybody, now is " `date`
+
+date >> test.txt
+
+然后添加作业
+
+* * * * * /home/oracle/test.sh >/home/oracle/log.txt & 默认值为1，即和下面命令一致
+
+* * * * * /home/oracle/test.sh 1>/home/oracle/log.txt &
+
+* * * * * /home/oracle/test.sh 2>/home/oracle/log.txt &
+
+* * * * * /home/oracle/test.sh 2>/home/oracle/log.txt 2>&1 &
+
+1,2将tesh.sh 命令输出重定向到log.txt, 即输出内容不打印到屏幕上，而是输出到log.txt文件中。如果你需要追加而不是覆盖，可以用 >>代替>
+
+2>&1 是将错误输出重定向到标准输出。 然后将标准输入重定向到文件log.txt。
+
+&1 表示的是文件描述1，表示标准输出，如果这里少了&就成了数字1，就表示重定向到文件1。
+
+注意事项：
+
+配置定时任务时，需要注意两个问题:
+
+1: 在SHELL中设置了必要的环境变量；例如一个shell脚本手工执行OK，但是配置成后台作业执行时，获取不到ORACLE的环境变量，这是因为crontab环境变量问题，Crontab的环境默认情况下并不包含系统中当前用户的环境。所以，你需要在shell脚本中添加必要的环境变量的设置
+
+2: 尽量所有的文件都采用完全路径方式，避免使用相对路径。
+
+ 
+
+参考资料：
+
+http://blog.csdn.net/tianlesoftware/article/details/5315039
+
+http://yke2000.blog.163.com/blog/static/319238142010147308843/

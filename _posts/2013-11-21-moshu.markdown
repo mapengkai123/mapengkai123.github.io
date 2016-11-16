@@ -1,0 +1,155 @@
+---
+layout: post
+title:  "php魔术方法"
+date:   2013-11-21 18:25:38 +0800
+---
+<img src="/images/fulls/02.jpg" class="fit image">
+
+
+魔术方法概念：
+
+	魔术方法是指在某些情况下，会自动调用的方法。PHP面向对象中，提供了这几个魔术方法，他们的特点都是以双下划线__开头的。
+
+作用：
+
+	这些魔术方法在自己写框架和比较底层的时候比较有用。
+
+构造函数：( __construct )
+
+	class Human{
+	public $name=null;
+	public $sex;
+	public function __construct($name,$sex){
+			$this->name=$name;
+			$this->sex=$sex;
+		}
+	}
+
+	$a = new Human(‘zhangsan’,’男’);
+
+
+作用：
+
+构造函数用来初始化对象，利用构造函数，我们可以操作对象，传值等。
+作用时机：构造函数就是在对象产生的时候，自动执行，就像婴儿出生时候的啼哭声。
+
+
+析构函数：
+
+	class Human{
+		public $name=null;
+		public $sex;
+		public function __destruct(){
+		echo “最后的遗言”;
+		}
+	}
+
+作用：在脚本调用完毕以后，需要做的事情，放在析构函数里。
+作用时机：析构函数就是在对象销毁的时候，自动执行，就像老人的临时遗言。
+publci __destruct(){}当一个对象销毁的时候被调用。但实际程序中，却不	需要专门销毁一个对象，因为PHP是脚本语言，在代码执行到最后一行的时候，	所有申请的内存都要释放掉，自然对象的那段内存也要释放，而这个时候析构	函数被自动执行。php在刷新页面的时候，申请所有内存，执行完毕以后收回	所有内存。所以php想内存泄露，也不是件容易的事情。
+
+
+__clone()
+
+语法：变量 = clone 对象变量：
+克隆对象的时候，被克隆出来的对象会去调用的方法。
+
+	class Human
+	{
+		public $name = '小明';
+		protected $age = '18';
+		private $money = 'xxx';
+		function  __clone(){
+			echo “正在执行克隆操作 因为调用了克隆方法”;
+		}
+	}
+	$p1 = new Human;
+	$p2 = clone $p1;
+
+
+__get()
+
+获取的意思，当对象去访问一个不存在或者权限不够的属性的时候，会自动触发的方法
+@param 		string 	$param 		访问的属性名；
+
+	function __get($param)
+	{
+		echo '你在访问'. $param .'属性值为：'. $this->$param .'<br>';
+	}
+
+
+__isset()
+使用isset或者empty去判断一个权限不够或者不存在的对象属性的时候，会自动调用
+@param 	string 		$param 	设置的属性名；
+
+	function __isset($param)
+	{
+		echo $param;
+		return true;
+	}
+
+isset($obj->xyz) 属性为真，但不能说明类声明了一个xyz属性！
+
+
+__unset()
+
+当用unset销毁对象的不可见属性时，会引发 __unset();
+
+	function __unset($param)
+	{
+		echo '你想销毁我的',$param;
+	}
+
+unset($p1->age);
+unset($p1->money);
+
+__call() 
+
+当去访问一个权限不够或者不存在的方法的时候，会自动触发的魔术方法。
+
+	function __call($key,$arr)
+	{
+		echo $key,' ',var_dump($arr);
+	}
+
+	注意：所有的魔术方法都是为了增加类的容错处理以及对结构的控制（对象）
+
+
+__autoload()
+
+自动加载类的方法 ，放在类的外部,当需要使用某个文件下下的所有类时，只需要设置	一个自动加载类的方法，就可以直接通过实例化类名的方式获得类的对象
+注意：1、路径问题
+      2、类文件的命名规范  文件名必须是   类名.class.php
+
+		function __autoload($c_name){
+		//判断要包含类文件是否存在
+		if(file_exists($c_name.".class.php")){
+				include_once($c_name.".class.php");
+		}else{
+				echo "您要包含的".$c_name."类文件不存在";
+			}
+		}
+
+自动加载只能用__autoload函数吗？用其他的有什么意义吗？
+
+答案：不是的，其实也可以指定一个函数的。
+
+	function zdjz($c){
+		require('./'.$c.'.php');
+	}
+
+	$Human = new HumanModel();
+
+这个时候，系统是无法识别zdjz这个函数的，也不会再调用HumanModel找不到的时候，自动调用zdjz这个函数。
+
+所以，要通知系统，让系统知道我自己写了一个自动加载的方法，当自动找不到HumanModel的函	数的时候，自动调用我这个方法。
+
+而系统正好有一个函数可以做这件事情。spl_autoload_register('zdjz')这个函数，可以把zdjz函数注册成为一个自动加载的函数类似__autoload。
+
+	spl_autoload_register('zdjz');
+	function zdjz($c){
+		requrie './'.$c.'.php';
+	}
+	$Human = new Human();
+	$human->t();
+	

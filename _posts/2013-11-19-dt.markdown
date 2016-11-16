@@ -1,0 +1,148 @@
+---
+layout: post
+title:  "php面向对象三大特性——多态"
+date:   2013-11-19 11:11:38 +0800
+---
+<img src="/images/fulls/dx.jpg" class="fit image">
+
+
+什么是多态性？
+
+多态性是继数据库抽象和继承后，面向对象语言的第三个特征。多态即多种形态，具有表现多种形态的能力特征。在面向对象中表示根据对象的类型以不同方式处理。多态性允许每个对象以适合自身的方式去响应共同的消息。多态性增强了软件的灵活性和重用性。
+
+多态：多种形态，在存在继承的情况下，子类必须重写父类的方法（子类拥有与父类同名的方法）
+
+子类方法的参数个数，方法名称要和父类方法的参数个数，方法名称一样。
+Parent在子类中访问父类的方法
+
+如我们创建一个doing()方法，如果是学生则打印上课，如是公司职员则打印上班。
+
+普通做法
+
+使用if判断
+
+	/**
+	 * @PHP多态性
+	 * @2013-11-19
+	 */
+	 
+	// 定义学生类
+	class student{
+	    public function cla(){
+	            echo "学生工正在上课!<br />";
+	    }
+	}
+	 
+	// 定义职员类
+	class office{                             
+	        public function Wor(){
+	            echo "职员正在上班!<br />";
+	        }
+	}
+	 
+	// 判断对象类型方法
+	function doing($obj){
+	        if($obj instanceof student){
+	            $obj->cla();
+	        }elseif($obj instanceof office){
+	            $obj->wor();
+	        }else{
+	            echo "没有这个对象！";
+	        }
+	}
+	 
+	doing(new student()); // 学生正在上课
+	doing(new office());  // 职员正在上班
+
+以上结果输出：
+
+	学生正在上课
+	职员正在上班
+
+这种普通方法有个缺点，就是对象如果很多，那么if..else..很长，不灵活。
+ 
+多态性做法
+
+定义一个公共抽象方法，所有子类继承它。	
+
+	/**
+	 * @PHP多态性
+	 * @2013-11-19
+	 */
+	 
+	// 定义一个公共类
+	class pub{
+	    protected function working(){
+	        echo "本方法需要在子类中重载!";
+	    }
+	}
+	 
+	// 定义学生类,继承公共类pub
+	class student extends pub{
+	    public function working(){
+	        echo "学生工正在上课!<br />";
+	    }
+	}
+	 
+	// 定义职员类,继承公共类pub
+	class office extends pub{
+	        public function working(){
+	        echo "职员正在上班!<br />";
+	        }
+	}
+	 
+	// 判断对象类型方法
+	function doing($obj){
+	        if($obj instanceof pub){
+	            $obj->working();
+	        }else{
+	            echo "没有这个对象！";
+	        }
+	}
+	 
+	doing(new student()); // 学生正在上课
+	doing(new office());  // 职员正在上班
+
+这就是多态的特性，灵活重用。
+ 
+其它做法
+
+从多态性的实现方式来看，无非就规范了每个类都要重载父类的一个方法，从而达到统一效果。而我们在定义类的时候，自行加上统一的方法也可行。因此以上例子也可以这么实现：
+
+	/**
+	 * @PHP多态性
+	 * @2013-11-19
+	 */
+	 
+	// 定义学生类
+	class student{
+	    // 定义统一的方法pub
+	    public function pub(){
+	        echo "学生工正在上课!<br />";
+	    }
+	}
+	 
+	// 定义职员类
+	class office{
+	    // 定义统一的方法pub
+	        public function pub(){
+	        echo "职员正在上班!<br />";
+	        }
+	}
+	 
+	// 判断对象类型方法
+	function doing($obj){
+	    if($obj){
+	        // 调用类的统一方法
+	            $obj->pub();
+	    }else{
+	        echo '没有这个对象'; 
+	    }
+	}
+	 
+	doing(new student()); // 学生正在上课
+	doing(new office());  // 职员正在上班
+
+当然，以上的例子不能说明多态性就能使用这样的方式搞定，毕竟多态性在复杂的程序设计中，它能有效的达到灵活重用的特性。
+
+多态性也可以理解为一种程序设计方式，而程序设计最终目的无非就是：灵活，多态，重用，高效。

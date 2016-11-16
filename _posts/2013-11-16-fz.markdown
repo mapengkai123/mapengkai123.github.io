@@ -1,0 +1,102 @@
+---
+layout: post
+title:  "php面向对象三大特性——封装"
+date:   2013-11-16 14:16:38 +0800
+---
+<img src="/images/fulls/dx.jpg" class="fit image">
+
+
+封装：将数据（属性）以及对数据的操作（方法）捆绑到一起，形成对外的	数据隐 	藏。只对外提供可以调用的接口供其使用。（public的方法和属性）。
+
+封装的过程称之为抽象：将具有相同特性的一类事务，把公共的内容抽离出	来，形成	文字描述的过程。
+ 访问控制符
+在属性或方法前面添加关键字 public（公有），protected（受保护）或 private（私	有）来实现的。
+注意：类属性的定义必须使用关键词。如果用 var 定义，则被视为公有。 
+目的：让类更加安全，不让外界直接访问类里面的成员变量
+
+做法：
+
+	1.把成员变量做成私有的。
+	2.做一个方法来实现取值或赋值，在方法里面加限制条件。
+
+class ren
+
+{
+
+　　private $name;
+
+　　private $sex;
+
+　　private $age;
+
+　　
+
+　　function __construct($s)
+
+　　{
+
+　　　　$this->sex=$s;　　
+
+　　}
+
+ 
+
+　　public function Say()
+　　{
+　　　　echo "hello";
+　　}
+
+
+　　function __destruct() //析构函数，对象销毁前执行
+　　{
+　　　　echo "该对象销毁了！";
+　　}
+
+　　
+
+　　function SetAge($a) //给age赋值的函数
+　　{
+　　　　if($a>10 && $a<50)
+　　　　{
+　　　　　　$this->age = $a;
+　　　　}
+　　}
+
+
+　　function GetAge() //取age的值
+　　{
+　　　　return $this->age;
+　　}
+
+　　
+
+　　function __set($name,$value) //对类里面的私有成员进行赋值的魔术方法
+
+　　{
+　　　　if($name == "age")
+　　　　{
+　　　　　　if($value>20 && $value<50)
+　　　　　　　　{
+　　　　　　　　　　$this->$name = $value;
+　　　　　　　　}
+　　　　}
+　　　　else
+　　　　{
+　　　　　　$this->$name = $value;
+　　　　}
+　　}
+
+　　function __get($name) //对类里面的私有成员进行取值的魔术方法^
+　　{
+　　　　return $this->$name;
+　　}
+
+}
+
+有的类成员可以在任何地方被访问。
+受保护的类成员则可以被其自身以及其子类和父类访问。
+私有的类成员则只能被其定义所在的类访问。
+
+使用类里面提供的魔术方法也可以实现对私有成员的操作
+__set()特点：会自动执行，把赋值语句中的变量名作为第一个参数，把变量值作为第二个参数调用__set方法
+__get()特点：会自动执行，把取值语句中的变量名作为参数调用__get方法

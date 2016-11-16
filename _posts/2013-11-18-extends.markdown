@@ -1,0 +1,133 @@
+---
+layout: post
+title:  "php面向对象三大特性——继承!"
+date:   2013-11-18 13:10:38 +0800
+---
+<img src="/images/fulls/dx.jpg" class="fit image">
+
+
+语法：
+
+	父类：拥有一些可以被继承的属性和方法
+	子类：想拥有自己不存在但是在别的类中存在的属性和方法
+
+关键字：extends
+子类 extends 父类
+
+继承的优点
+
+	1)便于扩展（子类可以在父类的基础上增加自己的特点）
+	2)节省代码：提高代码的复用性
+
+继承的细节
+
+	①　子类最多只能继承一个父类（指直接继承）
+	②　子类可以继承其父类的public,protected修饰的属性和方法。
+	③　在创建某个子类对象时，默认情况下不会自动调用其父类的构造函数。
+	④　如果在子类中需要访问父类中（以public/protected修饰）的方法，可以使用    父类：：方法名或者是parent::方法名。
+	⑤　如果子类（派生类）中的方法和父类（基类）方法相同，我们称之为方法重写/方法覆盖（后面讲解）。
+
+概念:如果一个类有子类，那么该子类会继承父类的一切东西（私有成员访问不到）
+在定义子类的时候需要加一个关键字：extends
+特点：单继承，一个儿子只能有一个父亲，一个类只能有一个父类
+如果父类中有构造函数，子类在实例化的时候要按照父类构造函数的标准来实例化
+
+子类对父类方法的重写：在子类中写一个同样的方法
+final：用来修饰类，代表该类是一个最终类，该类无法被继承
+继承：子类可以继承父类非私有的属性和方法
+定义一个父类：
+
+	class Info
+	{
+	　　const p = 3.1425926; //将某些类里面常用到的东西定义为常量，方便使用
+
+	　　public static $class; //static关键字定义静态的
+	　　public $code;
+	　　protected $name;
+	　　private $sex;
+
+	　　static function Test() //静态方法
+	　　　　{
+	　　　　　　echo self::$class; //调用自身类里面的静态成员
+	　　　　　　echo "静态方法！";
+	　　　　}
+
+	　　function __construct($s)
+	　　　　{
+	　　　　　　$this->sex = $s;
+	　　　　}
+
+	　　function Say()
+	　　　　{
+	　　　　　　echo self::$class; //普通方法里面可以调用静态成员
+	　　　　　　echo "hello";
+	　　　　}
+
+	　　function GetSex()
+	　　　　{
+	　　　　　　return $this->sex;
+	　　　　}
+	　　function SetSex($s)
+	　　　　{
+	　　　　　　$this->sex = $s;
+	　　　　}
+
+	　　function __set($n,$v)
+	　　　　{
+	　　　　　　$this->$n = $v;
+	　　　　}
+
+	　　function __get($n)
+	　　　　{
+	　　　　　　return $this->$n;
+	　　　　}
+	}
+
+	//对象实例化
+	$r = new Info("女");
+	$r->code = "join";
+	$r->sex;
+
+
+	Info::$class = "0305";
+	$r->Say();
+
+	Info::$class = "0305"; //访问静态成员
+	Info::Test();
+
+ 
+定义子类：extends
+
+	class Test extends Info
+	{
+	　　public $birthday;
+
+	　　function Run()
+	　　{
+	　　　　echo "run";
+	　　}
+
+	　　function Say()
+	　　{
+	　　　　parent::Say(); //调用父类的Say()方法
+	　　　　echo "Test Say";
+	　　}
+
+	}
+
+	 
+
+	$t = new Test("女");
+	$t->code = "p001";
+	//echo $t->sex;
+	$t->Say();
+	//$t->Run();*
+
+ 
+静态成员
+类里面的普通成员是属于对象的，不是属于类的（调用的时候是用对象调用）
+什么叫做静态的：类静态成员是属于类的，不是属于每个对象的
+定义静态成员用static关键字修饰
+静态方法里面无法调用普通成员
+静态方法可以调用静态成员,使用self关键字来调用
+self代表该类，$this代表该对象
