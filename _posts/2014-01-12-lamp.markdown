@@ -1,0 +1,68 @@
+---
+layout: post
+title:  " centos7之lamp环境搭建 "
+date:   2014-01-12 09:55:38 +0800
+---
+<img src="/images/fulls/centos.jpg" class="fit image">
+
+ 一、配置防火墙
+
+CentOS 7.0默认使用的是firewall作为防火墙。
+
+1、关闭firewall：
+
+    systemctl stop firewalld.service #停止firewall  
+    systemctl disable firewalld.service #禁止firewall开机启动  
+
+2、关闭SELINUX
+
+    vi /etc/selinux/config  
+    #SELINUX=enforcing #注释掉  
+    SELINUX=disabled #增加  
+    :wq! #保存退出  
+    setenforce 0 #使配置立即生效  
+
+3.安装apache
+
+    yum install httpd #根据提示，输入Y安装即可成功安装  
+    systemctl start httpd.service #启动apache  
+    systemctl stop httpd.service #停止apache  
+    systemctl restart httpd.service #重启apache  
+    systemctl enable httpd.service #设置apache开机启动  
+
+4.安装mariadb（mysql）
+
+    yum install mariadb mariadb-server #询问是否要安装，输入Y即可自动安装,直到安装完成  
+    systemctl start mariadb.service #启动MariaDB  
+    systemctl stop mariadb.service #停止MariaDB  
+    systemctl restart mariadb.service #重启MariaDB  
+    systemctl enable mariadb.service #设置开机启动  
+
+    修改mysql密码：set password for 'root'@'localhost'=password('root');  
+
+    mysql授权远程连接（navicat等）： grant all on *.* to root identified by 'root';  
+
+
+5、安装PHP以及组件，使PHP支持 MariaDB
+
+    yum install php php-mysql php-gd libjpeg* php-ldap php-odbc php-pear php-xml php-xmlrpc php-mbstring php-bcmath php-mhash  
+    #这里选择以上安装包进行安装，根据提示输入Y回车  
+    systemctl restart mariadb.service #重启MariaDB  
+    systemctl restart httpd.service #重启apache  
+
+
+测试篇
+
+cd /var/www/html
+
+vi index.php #输入下面内容
+
+	<?php
+
+	phpinfo();
+
+	?>
+
+:wq! #保存退出
+
+在客户端浏览器输入服务器IP地址，可以看到相关的配置信息！
