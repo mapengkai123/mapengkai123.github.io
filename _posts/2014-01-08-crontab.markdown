@@ -8,19 +8,32 @@ date:   2014-01-08 18:25:38 +0800
 
 一、定时任务
   定时任务，指定一个时间执行一个任务，只能执行一次。
+
 1、指令：at
+
 2、语法： at  时间
+
          at> 执行的指令
  时间类型 ：
+
 1）HH:MM
+
 说明：在今日的 HH:MM 时刻进行，若该时刻已超过，则明天的 HH:MM 进行此任务。
-  2）HH:MM YYYY-MM-DD
+
+2）HH:MM YYYY-MM-DD
+
 说明：规定在某年某月的某一天的特殊时刻进行该项任务
-  3）HH:MM[am|pm] [Month] [Date]
+
+3）HH:MM[am|pm] [Month] [Date]
+
 说明：规定在某年某月某日的某时刻进行该项任务
- 4）能够直接使用today（今天）、tomorrow（明天）来指定完成命令的时间。
- 5）now + 5 minutes
+
+4）能够直接使用today（今天）、tomorrow（明天）来指定完成命令的时间。
+
+5）now + 5 minutes
+
 3、退出at命令 ctrl+d
+
 命令前提：
 需要开启atd进程
 如果未安装atd需进行安装:
@@ -28,24 +41,30 @@ date:   2014-01-08 18:25:38 +0800
 ps -ef | grep atd 查看是否开启atd
 开启atd  service atd start|stop|restart|status
 chkconfig  atd  on   设置atd开机启动
+
 4、查询未执行的定时任务
    命令：atq
+
 5、删除未执行的定时任务
   命令：atrm 任务ID号
 
 二、计划任务
+
 1、命令crontab
+
   crontab 参数
   参数  -u 指定用户（如无指定即为当前用户）
         -l 列出计划任务
         -e 制定计划任务
         -r 删除计划任务
+
  crontab -e
+
  分，时，日，月，周  要执行的命令
+
 CRONTAB语法及应用
 
  
-
 1：查看当前用户的定时任务
 
 [oracle@localhost ~]$ crontab -l
