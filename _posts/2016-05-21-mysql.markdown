@@ -1,0 +1,47 @@
+---
+layout: post
+title:  "mysql 主从原理  "
+date:   2016-05-21 14:05:38 +0800
+---
+<img src="/images/fulls/11.jpg" class="fit image">
+
+
+说明本篇文章部分转载自互联网。
+
+MySQL的Replication（英文为复制）是一个多MySQL数据库做主从同步的方案，特点是异步复制，广泛用在各种对MySQL有更高性能、更高可靠性要求的场合。与之对应的是另一个同步技术是MySQL Cluster，但因为MySQL Cluster配置比较复杂，所以使用者较少。
+
+MySQL的Replication是一个异步复制的过程（mysql5.1.7以上版本分为异步复制和半同步两种模式），它是从一个Mysql instance（instance英文为实例）(我们称之为Master)复制到另一个Mysql instance(我们称之slave)。在master与slave之间实现整个复制过程主要由三个线程来完成，其中两个线程(SQL线程和IO线程)在slave端，另外一个线程(IO线程)在master端。
+
+要实现MySQL的Replication，首先必须打开master端的binlog (mysql-bin.xxxxxx)日志功能，否则无法实现mysql的主从复制。因为mysql的整个主从复制过程实际上就是：slave端从master端获取binlog日志，然后再在自己身上完全顺序的执行该日志中所记录的各种SQL操作。
+
+有关具体如何开启mysql的binlog日志功能，
+
+
+MySQL主从复制的基本交互过程，如下：
+
+1、slave端的IO线程连接上master端，并请求从指定binlog日志文件的指定pos节点位置(或者从最开始的日志)开始复制之后的日志内容。
+
+2、master端在接收到来自slave端的IO线程请求后，通知负责复制进程的IO线程，根据slave端IO线程的请求信息，读取指定binlog日志指定pos节点位置之后的日志信息，然后返回给slave端的IO线程。该返回信息中除了binlog日志所包含的信息之外，还包括本次返回的信息在master端的binlog文件名以及在该binlog日志中的pos节点位置。
+
+3、slave端的IO线程在接收到master端IO返回的信息后，将接收到的binlog日志内容依次写入到slave端的relaylog文件(mysql-relay-bin.xxxxxx)的最末端，并将读取到的master端的binlog文件名和pos节点位置记录到master-info（该文件存在slave端）文件中，以便在下一次读取的时候能够清楚的告诉master“我需要从哪个binlog文件的哪个pos节点位置开始，请把此节点以后的日志内容发给我”。
+
+4、slave端的SQL线程在检测到relaylog文件中新增内容后，会马上解析该log文件中的内容。然后还原成在master端真实执行的那些SQL语句，并在自身按顺丰依次执行这些SQL语句。这样，实际上就是在master端和slave端执行了同样的SQL语句，所以master端和slave端的数据是完全一样的。
+
+以上mysql主从复制交互过程比较拗口，理解起来也比较麻烦，我简化了该交互过程。如下：
+
+1、master在执行sql之后，记录二进制log文件（bin-log）。
+
+2、slave连接master，并从master获取binlog，存于本地relay-log中，然后从上次记住的位置起执行SQL语句，一旦遇到错误则停止同步。
+
+从以上mysql的Replication原理可以看出：
+
+* 主从间的数据库不是实时同步，就算网络连接正常，也存在瞬间主从数据不一致的情况。
+
+* 如果主从的网络断开，则从库会在网络恢复正常后，批量进行同步。
+
+* 如果对从库进行修改数据，那么如果此时从库正在在执行主库的bin-log时，则会出现错误而停止同步，这个是很危险的操作。所以一般情况下，我们要非常小心的修改从库上的数据。
+
+* 一个衍生的配置是双主、互为主从配置，只要双方的修改不冲突，则可以工作良好。
+
+* 如果需要多主库的话，可以用环形配置，这样任意一个节点的修改都可以同步到所有节点
+

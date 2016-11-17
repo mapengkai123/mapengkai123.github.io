@@ -1,0 +1,222 @@
+---
+layout: post
+title:  "支付宝接口开发总结 "
+date:   2014-03-07 18:35:30 +0800
+---
+<img src="/images/fulls/05.jpg" class="fit image">
+
+
+关于支付宝的接口集成其实很简单，目前大概有种类型，
+即时到帐、双功能、担保交易，
+只需要集成一次担保交易，其他的比如即时到帐集成很容易;
+担保交易的状态有几种，比如：是否支付成功，卖家是否发货，买家确认收获等。
+而即时到帐只有一种，就是是否已付款！最多还有个退款的功能。一般都没用到。
+
+通过之前做项目：配资平台，有个预付费的功能，用到了支付宝的双功能收款，其实就是提供两种付款方式，即时到帐和担保交易。一般买家谨慎会选择担保。
+
+下面说下具体的集成过程，
+
+第一：下载对应的集成接口包，比如即时到帐就下载即时到帐，担保下载担保，非常不建议将即时到帐修改成担保或者反之。案例中我下载的 双功能接口文件,utf-php接口。
+
+下载来的文件都大同小异，即时到帐和担保的文件也相差不大，反正可以肯定的说，只要配置一次担保支付宝接口，就能配置即时到帐。
+
+我们需要修改的文件有如下：
+
+	alipay.config.php[配置文件，只是用于修改配置接口开发者id和key]
+	alipayapi.php[主调文件，将需要发送的post数据交给该文件，然后负责跳转到支付页面]
+	index.php[demo演示页面，可以不做修改，但是其中传递的参数名陈需要看懂]
+	notify_url.php 返回数据页面，在其中将返回交易的状态，更具状态我们可以更改数据库订单信息，该文件是通过post方式接受。
+	return_url.php 返回数据页面，在其中将返回交易的状态，更具状态我们可以更改数据库订单信息，该文件是通过GET方式。
+
+具体过程：
+
+    第一步，修改配置信息：
+
+	$alipay_config['partner']       = 'xxx07xxxxxxxx';
+	 
+	//安全检验码，以数字和字母组成的2位字符
+	$alipay_config['key']           ='xxxxxxxxnow07oajbflskxxxxxxxxxx';
+     第二：拼post数据，一般只需要修改请求参数
+
+
+	/**************************请求参数**************************/
+	        //支付类型
+	        $payment_type = "";
+	        //必填，不能修改
+	        //服务器异步通知页面路径
+	        $notify_url = "http://你的域名/alipay/notify_url.php";
+	        //需http://格式的完整路径，不能加?id=2这类自定义参数
+	 
+	        //页面跳转同步通知页面路径
+	        $return_url = "http://你的域名/alipay/return_url.php";
+	        //需http://格式的完整路径，不能加?id=2这类自定义参数，不能写成http://localhost/
+ 
+	        //卖家支付宝帐户
+	        $seller_email = $_POST['WIDseller_email'];//demo[index.php]传过来的
+	        //必填
+	 
+	        //商户订单号
+	        $out_trade_no = $_POST['WIDout_trade_no'];//传过来的
+	        //商户网站订单系统中唯一订单号，必填
+	 
+	        //订单名称
+	        $subject = $_POST['WIDsubject'];//同上
+	        //必填
+	 
+	        //付款金额
+	        $price = $_POST['WIDprice'];//传过来的，是你的表单中填写的值
+	        //必填
+	 
+	        //商品数量
+	        $quantity = "";
+	        //必填，建议默认为，不改变值，把一次交易看成是一次下订单而非购买一件商品
+	        //物流费用
+	        $logistics_fee = "0.00";
+	        //必填，即运费	        //物流类型
+	        $logistics_type = "EXPRESS";
+	        //必填，三个值可选：EXPRESS（快递）、POST（平邮）、EMS（EMS）
+	        //物流支付方式
+	        $logistics_payment = "SELLER_PAY";
+	        //必填，两个值可选：SELLER_PAY（卖家承担运费）、BUYER_PAY（买家承担运费）
+	        //订单描述
+	 
+	        $body = $_POST['WIDbody'];
+	        //商品展示地址
+	        $show_url = $_POST['WIDshow_url'];
+	        //需以http://开头的完整路径，如：http://www.ya-jing.com 
+	 
+	        //收货人姓名
+	        $receive_name = '萤火';
+	        //如：张三
+	 
+	        //收货人地址
+	        $receive_address = $_POST['WIDreceive_address'];
+	        //如：XX省XXX市XXX区XXX路XXX小区XXX栋XXX单元XXX号
+	 
+	        //收货人邮编
+	        $receive_zip = $_POST['WIDreceive_zip'];
+	        //如：123456
+	 
+	        //收货人电话号码
+	        $receive_phone = $_POST['WIDreceive_phone'];
+	        //如：0571-88158090
+	 
+	        //收货人手机号码
+	        $receive_mobile = $_POST['WIDreceive_mobile'];
+	        //如：18201111002
+
+第三：数据构造完成后就可以在页面上付款，测试能不能正确的打开支付页面。如果能打开，这时候就可以进行付款了，但是买家付款的状态我们还无法获知，比如有没有成功付款，卖家是否已经发货等。那么接下来开始做返回状态的业务逻辑处理。
+
+打开return_url.php文件，根据提示修改，做对因的处理。
+	//——请根据您的业务逻辑来编写程序（以下代码仅作参考）——
+	    //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表
+	 
+	    //商户订单号 $out_trade_no = $_GET['out_trade_no'];
+	 
+	    //支付宝交易号    $trade_no = $_GET['trade_no'];
+	 
+	    //交易状态
+	    $trade_status = $_GET['trade_status'];
+	 
+	 
+	    if($_GET['trade_status'] == 'WAIT_SELLER_SEND_GOODS') {//状态为成功
+	    //处理自己网站的业务逻辑
+	        if(!$order['status']){//判断本地数据库中的订单是否已经处理
+	            db_update("stx_recharge",array("status"=>),array("oid"=>$_GET
+	 
+	['out_trade_no']));//如果没处理就将状态改成已经处理。
+	            //金钱的增加
+	            $zd = db_line("stx_terminal",array("id"=>$order['ztid']));
+	            db_update("stx_terminal",array("money"=>$zd['money']+$order
+	 
+	['money']),array("id"=>$order['ztid']));//增加余额到该用户的账户上。
+	        }
+	    }
+	    else if($_GET['trade_status'] == 'TRADE_FINISHED') {
+	        //判断该笔订单是否在商户网站中已经做过处理
+	            //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统
+	 
+	中查到该笔订单的详细，并执行商户的业务程序
+	            //如果有做过处理，不执行商户的业务程序
+	    }
+	    else {
+	      echo "trade_status=".$_GET['trade_status'];
+	    }
+	         
+	    echo "验证成功<br />";
+	    echo "trade_no=".$trade_no;
+     notify_url.php也是一样，根据状态来编写对应的代码！notify_url.php文件中的状态要多一些。
+
+	//——请根据您的业务逻辑来编写程序（以下代码仅作参考）——
+	     
+	    //获取支付宝的通知返回参数，可参考技术文档中服务器异步通知参数列表
+	     
+	    //商户订单号
+	 
+	    $out_trade_no = $_POST['out_trade_no'];
+	 
+	    //支付宝交易号
+	 
+	    $trade_no = $_POST['trade_no'];
+	 
+	    //交易状态
+	    $trade_status = $_POST['trade_status'];
+	 
+	 
+	    if($_POST['trade_status'] == 'WAIT_BUYER_PAY') {
+	    //该判断表示买家已在支付宝交易管理中产生了交易记录，但没有付款
+	     
+	        //判断该笔订单是否在商户网站中已经做过处理
+            //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
+            //如果有做过处理，不执行商户的业务程序
+	             
+	        echo "success";    //请不要修改或删除
+	 
+	        //调试用，写文本函数记录程序运行情况是否正常
+	        //logResult("这里写入想要调试的代码变量值，或其他运行的结果记录");
+	    }
+	    else if($_POST['trade_status'] == 'WAIT_SELLER_SEND_GOODS') {
+	    //该判断表示买家已在支付宝交易管理中产生了交易记录且付款成功，但卖家没有发货
+	     
+	        if(!$order['status']){
+	            db_update("stx_recharge",array("status"=>),array("oid"=>$_POST['out_trade_no']));
+	            //金钱的增加
+	            $zd = db_line("stx_terminal",array("id"=>$order['ztid']));
+	            db_update("stx_terminal",array("money"=>$zd['money']+$order['money']),array("id"=>$order['ztid']));
+	        }
+	             
+	        echo "success";    //请不要修改或删除
+	 
+	        //调试用，写文本函数记录程序运行情况是否正常
+	        //logResult("这里写入想要调试的代码变量值，或其他运行的结果记录");
+	    }
+	    else if($_POST['trade_status'] =='WAIT_BUYER_CONFIRM_GOODS') {
+	    //该判断表示卖家已经发了货，但买家还没有做确认收货的操作
+	     
+	        if(!$order['status']){
+	            db_update("stx_recharge",array("status"=>),array("oid"=>$_POST['out_trade_no']));
+	            //金钱的增加
+	            $zd = db_line("stx_terminal",array("id"=>$order['ztid']));
+	            db_update("stx_terminal",array("money"=>$zd['money']+$order['money']),array("id"=>$order['ztid']));
+	        }
+	             
+	        echo "success";    //请不要修改或删除
+	 
+	        //调试用，写文本函数记录程序运行情况是否正常
+	        //logResult("这里写入想要调试的代码变量值，或其他运行的结果记录");
+	    }
+	    else if($_POST['trade_status'] == 'TRADE_FINISHED') {
+	    //该判断表示买家已经确认收货，这笔交易完成
+	     
+		        //判断该笔订单是否在商户网站中已经做过处理
+	            //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
+	            //如果有做过处理，不执行商户的业务程序
+	             
+	        echo "success";    //请不要修改或删除
+	 
+	        //调试用，写文本函数记录程序运行情况是否正常
+	        //logResult("这里写入想要调试的代码变量值，或其他运行的结果记录");
+	    }
+由于我基本上没有用到后续的发货处理，所以在该状态下未做处理，如果您的网站是购物网站秒就需要做对应的处理，比如更新状态值为已发货，或者未付款、已确认等。方便看到交易流程。同时在已付款的订单中会产生支付宝的订单id，可以同时记录在自己的订单中。
+
+接下来就是接口的调试，每次可以支付毛钱来进行测试。

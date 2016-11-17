@@ -1,0 +1,109 @@
+---
+layout: post
+title:  "伪静态及图片放盗链"
+date:   2014-03-21 10:20:18 +0800
+---
+<img src="/images/fulls/404.jpg" class="fit image"> 
+
+
+一、伪静态：
+
+从形式上看是一个静态地址，实际上还是访问的动态地址，
+比如：访问：http://www.abc.com/news-sport-id123.html
+实际上是：http://www.abc.com/news.php?type=sprot&id=123;
+主要是利于seo,静态页面的方式，比较容易被搜索引擎给搜集。
+
+  Localhost/6.php     输入 localhost/6.html 同样能输出跟6.php同样的内容    
+
+1、实现原理：
+使用apac he的rewrite机制。
+rewrite机制：就是一个url的重写机制，
+2、如何开启重写模块，
+在httpd.conf文件中进行开启。
+
+<img src="/images/thumbs/err.png" class="fit image"> 
+
+3、配置方式：
+  1）直接在配置虚拟主机处进行配置 ,每次修改apache的文件都需要重启apache
+	<VirtualHost *:80>
+	#主机名
+	ServerName  localhost 
+	#开启重写引擎
+	RewriteEngine on
+	#写重写规则
+	RewriteRule /index.html  /6.php [L]
+	#文件的根目录路径
+	DocumentRoot  "E:/server/apache/htdocs" 
+	<Directory  "E:/server/apache/htdocs">
+	#结构样式
+	#打开默认的首页
+	DirectoryIndex  index.php  index.html 
+	#打开默认索引列表   
+	Options  Indexes  FollowSymLinks     
+	#权限
+	#权限控制   先拒绝后允许 
+	Order Deny,Allow   
+	#允许所有用户进行访问 
+	AllowOverride All
+	Allow from  All    
+	</Directory>
+	</VirtualHost>
+
+  2）分布式配置 具体的.htaccess文件中的配置： 在网站的根目录下创建一个文件，文件名为.htaccess 
+
+	  <ifModule rewrite_module>
+	   #打开重写引擎
+	   RewriteEngin on
+	   #RewriteCond 判断条件（服务器变量） 条件表达式  [条件标志]
+	   #RewriteRule  规则url   目标url  [规则的标志]
+	 </ifModule>
+
+4、具体的语法：
+
+RewriteEngine on  #开启重写引擎
+RewriteCond  重写条件，要满足一定的条件才重写。
+
+RewriteCond条件的语法：
+RewriteCond   判断依据   条件表达式 [条件标志]
+
+（1）判断依据：可以使用服务器变量：
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+比如：%{REQUEST_FILENAME}  表示请求的文件名称
+比如：%{HTTP_REFERER}:表示请求的来源。
+
+（2）条件表达式：可以是一些标志，或者字符串
+
+比如：
+
+-d   表示是一个目录
+-f    表示是一个文件
+
+RewriteCond %{REQUEST_FILENAME} !-d  //如果请求的路径不是一个目录
+RewriteCond %{REQUEST_FILENAME} !-f  //如果请求的路径不是一个文件
+
+（3）[条件标志]
+
+[NC]表示不区分大小写
+[OR],在默认情况下多个条件（RewriteCond）之间是并且的关系。如果我们使用或关系则后台添加[OR]标志。
+
+
+
+RewriteRule  语法规则
+RewriteRule   规则的url（可以使用正则）  目标url  [规则标志]
+规则标志：
+[F] 表示：表示禁止重写
+[NC] 表示：不区分大小写
+
+如何选择真静态和伪静态？
+
+网站实时性要求高,不要使用静态化（真静态，伪静态均不适宜）。
+如果网站访问量较小，没有必要使用静态化技术
+如果数据项目不多，但是访问频率极大，建议使用真静态,比如新浪新闻频道。
+如果数据项目海量，使用真静态会生成海量的html静态页面，建议使用伪静态。
+在一个大型网站中，静态化技术是综合使用的，这个需要大家经验的积累，多做项目。（sina网站：新闻频道，真静态，基金频道：伪静态，管理后台：不使用静态技术）
+
+
+
+
