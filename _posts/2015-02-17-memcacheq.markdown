@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Memcached"
+title:  "MemcachedQ"
 date:   2015-02-17 11:10:38 +0800
 ---
 <img src="/images/fulls/03.jpg" class="fit image"> 
