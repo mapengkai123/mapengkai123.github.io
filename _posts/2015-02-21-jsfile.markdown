@@ -3,7 +3,7 @@ layout: post
 title:  "html5解决大文件断点续传 "
 date:   2015-02-21 10:55:38 +0800
 ---
-<img src="/images/fulls/03.jpg" class="fit image">
+<img src="/images/fulls/05.jpg" class="fit image">
 
 
 js代码：

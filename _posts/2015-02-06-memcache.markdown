@@ -5,10 +5,10 @@ date:   2015-10-27 11:10:38 +0800
 
 ---
 <img src="/images/fulls/03.jpg" class="fit image"> 
+
+
+
 Redis，Memcache的区别
-
-
-
  现在新浪微博大规模的都是基于redis来架构的。
 redis和memecache的不同在于：
 1、存储方式：
