@@ -2,10 +2,8 @@
 layout: post
 title:  "Redis，Memcache的区别"
 date:   2015-10-27 11:10:38 +0800
-
 ---
 <img src="/images/fulls/03.jpg" class="fit image"> 
-
 
 
 Redis，Memcache的区别
