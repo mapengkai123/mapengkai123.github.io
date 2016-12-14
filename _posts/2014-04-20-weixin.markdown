@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "微信二维码登录"
-date:   2014-04-18 20:08:18 +0800
+date:   2014-04-20 10:08:38 +0800
 ---
 <img src="/images/fulls/wx.png" class="fit image"> 
 

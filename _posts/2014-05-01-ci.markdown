@@ -1,0 +1,584 @@
+---
+layout: post
+title:  "CodeIgniter框架"
+date:   2014-05-01 14:08:38 +0800
+---
+<img src="/images/fulls/05.jpg" class="fit image"> 
+
+
+1、回忆MVC
+
+1.1、M：模型，提供数据，保存数据
+
+1.2、V：视图，只负责显示，表单form
+
+1.3、C：控制器，协调模型和视图
+
+1.4、action：动作，是控制器中的方法，用于被浏览器请求
+
+
+2、CI中的MVC
+
+CI简介：CodeIgniter是一个轻量级但功能强大的php框架，基于MVC的设计模式。提供了一套丰富的类库
+
+2.1、访问的url使用的pathinfo
+
+2.2、格式：入口文件/控制器/动作（默认pathinfo格式）
+
+2.3、application目录：
+
+Controllers控制器
+
+Models模型
+
+Views视图
+
+2.4、默认的控制器是welcome
+
+2.5、默认的动作是index
+
+2.6、文件名全部小写
+
+3、控制器(controller)：
+
+3.1、不需要加后缀，直接是类名.php
+
+3.2、文件名全部小写，例如 user.php（大写的文件名浏览器不支持）
+
+3.3、所有的控制器，直接或间接继承自CI_Controller类，类名首字母大写
+
+3.4、方法名不区分大小写
+
+动作要求：1.必须以public开头
+
+2.不能以下划线（_）开头
+
+注意！方法名与类名相同，会被php当做构造方法（__construct）
+
+4、视图(view)
+
+4.1、在控制器中加载视图：$this->load->view(“user_add”);//不加扩展名
+
+4.2、在控制器中加载视图：$this->load->view(“user/add”);//不加扩展名
+
+注意：可以多次调用$this->load->view(视图);
+
+4.3、视图中，直接使用原生php代码
+
+4.4、在控制器中分配变量：$this->load->vars(“视图中变量名”，php中变量名);
+
+例如：$str=“abcdefg”;
+
+$this->load->vars(“str”,$str);
+
+    视图中使用：<?php echo $str;?>
+
+4.5、在控制器中分配多个变量：
+
+例如：$str=“abcd”;
+
+$list = array(“id”=>”1”,”name”=>”zhangsan”,”pwd”=>”1234”);
+
+$data[“str”]=
+$str;
+
+$data[“list”]=
+$list;
+
+$this->load->vars($data);
+
+
+
+4.6、CI框架会自己解决php中的短标签<?=…?>
+
+4.7、推荐使用：
+
+    <?phpforeach($listas
+    $key=>$val):?>…<?php endforeach;?>
+
+
+
+
+5、超级对象：当前控制器对象，提供了很多属性
+
+
+
+5.1、$this->load属性
+
+5.1.1、装载器类的实例
+system/core/Loader.php
+
+5.1.2、CI_Loader提供的方法：
+
+$this->load->view()装载视图
+
+$this->load->vars()分配变量到视图
+
+$this->load->database()装载数据库操作对象
+
+$this->load->model()装载模型对象
+
+$this->load->helper()帮助对象
+
+$this->load->view(“视图名”,$变量名)装载视图时分配变量
+
+
+5.2、$this->uri属性
+
+5.2.1、装载器类的实例
+system/core/URI.php
+
+5.2.2、CI_URI提供的方法：
+
+$this->uri->Segment(n)用于获取URL中的第n个参数
+
+控制器代表1，动作代表2，值1代表3，值2代表为4…
+
+用法1：入口文件/控制器/动作/值1/值2
+
+echo $this->uri->segment(3)；//输出值1
+
+用法2：index.php/控制器/动作/6
+
+//可以直接获取;参数一定要对应正确
+
+publicfunction($id=0){
+
+echo $id;//输出6
+
+}
+
+
+5.3、$this->input属性
+
+5.3.1、装载器类的实例
+system/core/Input.php
+
+5.3.2、CI_Input提供的方法:
+
+$this->input->post(‘username’);//$_POST[“username”];
+
+$this->input->server(“DOCUMENT_ROOT”);//$_SERVER[“DOCUMENT_ROOT”]
+
+$this->input->server(“REMOTE_ADDR”);//客户端IP
+
+$this->input->server(“SERVER_ADDR”);//服务器端IP
+
+注意：在视图中，可以直接用$this来访问超级对象中的属性
+
+
+
+6、访问数据库
+
+
+
+6.1、修改配置文件：application/config/database.php
+
+6.2、装载数据库操作类：$this->load->database();
+
+加载成功后，会放入超级对象的属性中，默认属性名是db
+
+
+$this->db
+
+6.3、$query=
+$this->db->query($sql);//返回值是对象(array_fetch_object)
+
+$sql = $this->db->last_query($sql);//显示最后一条执行的sql语句
+
+6.3.1、$query=
+$this->db->escape();//此函数会确定数据类型，对字符串类型数据转义
+
+6.4、$list=
+$query->result();//返回数组，数组中是一个一个的对象
+
+6.5、$list=
+$query->result_array();//返回二维数组，里面是关联数组
+
+6.6、$row=
+$query->row();//返回第一条数据，直接是一个对象
+
+6.7、$row=
+$query->row_array();//返回第一条数据,是一个数组
+
+6.8、$count=
+$query->num_rows();//返回结果集的行数
+
+6.9、$field=
+$query->num_fields();//返回请求的字段数
+
+6.10、$count=
+$query->affected_rows();//返回受影响的行数
+
+6.11、$id=
+$query->insert_id();//返回自增ID
+
+
+
+7、数据库中的配置
+
+7.1、自动加载db：
+
+在application/config/autoload.php中配置：
+
+$autoload[“libraries”]=
+array(“database”);
+
+这样就不需要 $this->load->database();
+
+
+7.2、参数绑定
+
+$name = $this->input->post(“name”);
+
+$pwd = $this->input->post(“pwd”);
+
+//使用问号绑定参数
+
+$data[0]=
+$name;
+
+$data[1]=
+$pwd;//用二维数组传递值
+
+$sql =“insertinto
+ci_user(name,pwd)
+values (?,?)”;//多个问号,需要传一个索引数组
+
+$bool = $this->db->query($sql,$data);//返回值是boolean
+
+7.3、表前缀配置
+
+在application/config/database.php中配置：
+
+    $db[‘default’][‘dbprefix’]=‘ci_’;
+
+    $db[‘default’][‘swap_pre’]=‘ci_’;
+
+配置为一样，代码中，直接编写表前缀后面的名就行了，如果以后项目表前缀发生变化，只需要修改
+
+    $db[‘default’][‘dbprefix’]=‘new_’，
+
+代码中ci_会自动替换为new_
+
+
+
+8、数据库操作（AR模型）
+
+8.1、配置application/cinfig/database.php中
+
+$active_record = TRUE;
+
+8.2、在配置文件中，配置表前缀后，会自动添加
+
+8.3、查找(get)：
+
+$res = $this->db->get(‘表名’);//返回结果集对象
+
+$list = $res->result();//返回数组，数组中是一个一个的对象
+
+$list = $res->result_array();//返回二维数组，里面是关联数组
+
+8.4、插入(insert):
+
+//数据使用关联数组
+
+$data[“数据库字段名”]=值；//$this->input->post(“name”);
+
+$data[“数据库字段名”]=值；
+
+$res = $this->db->insert(“数据表名”,$data);//返回结果boolean;
+
+8.5、修改(update):
+
+//数据使用关联数组
+
+$data[“数据库字段名”]=值；//$this->input->post(“name”);
+
+$data[“数据库字段名”]=值；
+
+$where = array(“id”=>”4”);
+
+$res = $this->db->update(“数据表名”,$data,$where);//返回结果boolean;
+
+8.6、删除(delete):
+
+$where = array(“id”=>”4”);
+
+$res = $this->db->dalete(“数据表名”,
+$where);//返回结果boolean;
+
+
+
+9、AR的连贯操作
+
+
+
+9.1、$res=
+$this->db->select("id,name")//查找的字段
+
+->from("user")//数据表名
+
+->where("id
+>",3)//条件
+id与>之间必须要有空格
+
+->order_by("id
+desc")//排序
+
+->limit(3,1)//分页；表示跳过1条，取3条，与tp相反
+
+->get();//获取数据
+
+$list = $res->result_array();
+
+9.2、where()条件
+
+条件符：“>”、“>=”、“<”、“<=”、“=”、“!=“；不指定条件付默认是”=“
+
+1、只有单个条件时：
+
+9.2.1、$res=
+$this->db->where(“字段”,”值”)->get();
+
+例如：$res= $this->db->where(“name”,”admin”)->get();//自动会加上“=”
+
+9.2.2、$res=
+$this->db->where(“字段=”,”值”)->get();
+
+例如：$res= $this->db->where(“name=”,”admin”)->get();//必须要有空格
+
+2、有多个条件时：用array()
+
+9.2.3、$res=
+$this->db->where(array(“字段”=>”值”,“字段”=>”值”))->get();
+
+例如：$res= $this->db->where(array(“name”=>”admin”,“id>3”=>”2”))->get();
+
+9.2.4、复杂的查询语句使用$this->db->query($sql,$data);//使用问号绑定参数
+
+9.3、join连接查询
+
+9.3.1、默认为左查询（left
+join … on）
+
+$this->db->select(“字段”)
+
+->from(“数据表名”)
+
+->join('连接表','连接条件')
+
+->get();    //默认为左查询（left
+join … on） 例如：
+
+$this->db->select(“*”)
+
+->from(“user”)
+
+->join('category',
+user.id= category.id)//默认为左查询（left
+join ）
+
+->get();
+
+
+
+9.3.2、通过join()第三个可选参数选择连接，可选参数包括：left、 right、outer、 inner、left outer、right outer
+
+例如：
+
+$this->db->select(“*”)
+
+->from(“user”)
+
+->join(“category”, “user.id = category.id”,”left”)//通过第三个参数指定
+
+->get();
+
+10、扩展CI控制器
+
+
+
+10.1、扩展控制器
+
+1、在application/core新建一个自己的控制器（MY_Controller），新建的控制器继承CI_Controller类，可以从自己创建的控制器中进行扩展。
+
+例如：class MY_Controller extends CI_Controller{
+
+Public function __consreuct(){
+
+Parent::__construct(); //调用父类的构造方法
+
+//登陆验证
+
+//权限验证
+
+}
+
+}
+
+2、让welcome.php继承自己创建的控制器（MY_Controller），间接继承CI_Controller。
+
+3、控制器前缀可以修改
+
+在application/config/config.php中修改：
+
+$config['subclass_prefix'] = 'MY_'; 
+
+11、模型(model)
+
+11.1、模型文件命名：user_model.php 、category_model.php，文件名小写
+
+建议：模型文件名使用_model为后缀，防止与控制器类名冲突！
+
+11.2、所有的模型，直接或间接继承自CI_Model类，类名首字母大写
+
+11.3、里面创建所需要的方法：getAll()…
+
+11.4、控制器中加载模型：$this->load->model(“模型文件名”); //不加后缀
+
+11.5、控制器中加载模型时起别名：$this->load->model(“模型文件名”,”别名”);
+
+加载成功后，会放入超级对象的属性中，默认属性名是模型文件名或别名
+
+11.6、控制器中调用模型，获取数据：$this->模型文件名->方法名();
+
+例如：$this->load->model(“User_model”); //注意大小写
+
+$this->User_model->getAll(); //调用模型，获取数据
+
+11.6.1、控制器中调用模型，获取数据：$this->别名->方法名();
+
+例如：$this->load->model(“User_model”,”user”); //注意大小写
+
+$this->user->getAll(); //调用模型，获取数据
+
+12、CI中url相关函数
+
+12.1、加载辅助函数：$this->load->helper(“url”);
+
+配置自动加载辅助函数：在application/config/autoload.php中配置
+
+$autoload['helper'] = array('url');
+
+就不用写$this->load->helper(“url”);
+
+辅助函数：
+
+site_url(“控制器/动作/参数”) ; //处理url及参数
+
+在视图中使用
+
+    <?php echo site_url(“控制器/动作/参数”)?>
+
+base_url()；//返回网站的根目录(“ci/”);
+
+13、CI中的路由与伪静态、隐藏index.php入口文件
+
+13.1、路由设置
+
+在application/config/routes.php中设置/修改：
+
+$route['default_controller'] = "welcome"; //默认的控制器为welcome
+
+13.2、伪静态设置
+
+在application/config/routes.php中设置/修改：
+
+//正则匹配（控制器/）
+
+$route['news/[\d]{6}/([\d\w]+)\.html']
+= 'user/show/$1';
+
+http://localhost/CI/index.php/news/201401/caolizhi66.html
+
+将动作news中的参数路由到user/show/$1
+
+
+
+13.3、隐藏入口文件index.php
+
+13.3.1、开启apache配置文件：LoadModule rewrite_module modules/mod_rewrite.so
+
+13.3.2、在入口文件统计目录中，创建一个.htaccess文件，内容如下：
+
+    <IFModule mod_rewrite.c>
+
+    RewriteEngine on //启用伪静态
+
+    RewriteCond %{REQUEST_FILENAME} !-d //匹配不存在的目录
+
+    RewriteCond %{REQUEST_FILENAME} !-f //匹配不存在的文件
+
+    RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L] //重写规则
+
+    </IFModule>
+
+
+
+这样就不用写入口文件index.php了
+
+14、CI中的分页
+
+$this->load->library('pagination');
+
+1 $config['base_url'] = $url;
+
+2 /* 分页的基础 URL
+
+3 如果你想用a、b的链接形式，则该url应该形式如/news/page/ 
+
+4 如果链接是c、d的形式，则url应该如/news? 
+
+5 */ 
+
+6 $config['total_rows'] = $total;//记录总数，这个没什么好说的了，就是你从数据库取得记录总数
+
+7 $config['per_page'] = $pagesize; //每页条数。额，这个也没什么好说的。。自己设定。默认为10好像。
+
+8 $config['page_query_string'] = TRUE;
+
+9 /*传参形式。开启true则会自动在你的url后面加上&per_page=3。(这个per_page是默认的查询字符，当然你也可以用$config['query_string_segment']来自己设定)
+
+10 因此c、d中的形式一般是为localhost/news?&per_page=2不过都一样，没什么影响。get的per_page还是3
+
+ */ 
+
+      $config['first_link'] = '首页';
+    // 第一页显示 
+
+      $config['last_link'] = '末页';
+    // 最后一页显示 
+
+      $config['next_link'] = '下一页>';
+    // 下一页显示
+
+      $config['prev_link'] = '<上一页';
+    // 上一页显示
+
+      $config['cur_tag_open'] = '<aclass="current">';
+    // 当前页开始样式 
+
+      $config['cur_tag_close'] = '</a>';
+
+      /*当前页结束样式。这些你可以自己尝试一下。
+
+比如说我想让当前页的分页数字样式好看一点，红色字体等。你就可以在current上加上css代码
+
+20*/
+
+21 $config['num_links']
+= 2;//当前连接前后显示页码个数。意思就是说你当前页是第5页，那么你可以看到3、4、5、6、7页。
+
+22 $config['uri_segment']=4;
+
+23/*这个是你在用a)、b)链接样式的时候，用来判断页页数。
+
+24 比如localhost/news/page/3 这个uri_segment就要设定为3。localhost/news/title/page/3这个就要设定为4
+
+25 */
+
+26 $config['use_page_numbers']=TRUE;
+
+27/*这个就是a)、b)的差别了。开启了，page就会表示页数。false就会表示记录数
+
